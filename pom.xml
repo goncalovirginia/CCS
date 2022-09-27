@@ -8,7 +8,7 @@
   <packaging>war</packaging>  
   <properties> 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>  
-    <authors>56773</authors>
+    <authors>56773</authors> 
   </properties>  
   <dependencies> 
     <dependency> 
@@ -103,8 +103,8 @@
               </resource> 
             </resources> 
           </deployment>  
-          <resourceGroup>scc-backend-rg-${authors}</resourceGroup>  
-          <appName>scc-backend-${authors}</appName> 
+          <resourceGroup>scc-backend-rg-56773</resourceGroup>  
+          <appName>scc-backend-56773</appName> 
         </configuration> 
       </plugin> 
     </plugins> 
