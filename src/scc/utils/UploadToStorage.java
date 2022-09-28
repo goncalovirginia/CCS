@@ -16,7 +16,7 @@ public class UploadToStorage {
 		String filename = args[0];
 		
 		// Get connection string in the storage access keys page
-		String storageConnectionString = "DefaultEndpointsProtocol=https;AccountName=scc56773;AccountKey=MbBOrQgpW5oePKpSsEqqYFU3bCOSBIOTCd8+xhs7D40fVREzaS0q2NarLjS/z/Tl5ry/xR4kqvQE+AStFOE1/w==;EndpointSuffix=core.windows.net";
+		String storageConnectionString = "DefaultEndpointsProtocol=https;AccountName=scc56773;AccountKey=SptJlI8OAt6QVBrEYGwaK1irSSPFC2ZJOQKBl4bTCOwgJH1F0CPtB9jmLxrbtZLmKcE0LlyxaWhV+AStBdrt8A==;EndpointSuffix=core.windows.net";
 		
 		try {
 			BinaryData data = BinaryData.fromFile(Path.of(filename));
@@ -34,7 +34,6 @@ public class UploadToStorage {
 			blob.upload(data);
 			
 			System.out.println("File updloaded : " + filename);
-			
 		}
 		catch (Exception e) {
 			e.printStackTrace();

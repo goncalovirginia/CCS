@@ -19,7 +19,7 @@ import java.util.Map;
 @Path("/media")
 public class MediaResource {
 	
-	private static final String STORAGE_CONNECTION_STRING = "DefaultEndpointsProtocol=https;AccountName=scc56773;AccountKey=MbBOrQgpW5oePKpSsEqqYFU3bCOSBIOTCd8+xhs7D40fVREzaS0q2NarLjS/z/Tl5ry/xR4kqvQE+AStFOE1/w==;EndpointSuffix=core.windows.net";
+	private static final String STORAGE_CONNECTION_STRING = "DefaultEndpointsProtocol=https;AccountName=scc56773;AccountKey=SptJlI8OAt6QVBrEYGwaK1irSSPFC2ZJOQKBl4bTCOwgJH1F0CPtB9jmLxrbtZLmKcE0LlyxaWhV+AStBdrt8A==;EndpointSuffix=core.windows.net";
 	
 	private static final BlobContainerClient containerClient = new BlobContainerClientBuilder()
 			.connectionString(STORAGE_CONNECTION_STRING)
