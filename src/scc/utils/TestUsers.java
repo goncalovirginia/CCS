@@ -11,6 +11,7 @@ import java.util.Locale;
  * Standalone program for accessing the database
  */
 public class TestUsers {
+	
 	public static void main(String[] args) {
 		try {
 			Locale.setDefault(Locale.US);
@@ -63,7 +64,7 @@ public class TestUsers {
 				System.out.println(e);
 			}
 			
-			System.out.println("Delte user");
+			System.out.println("Delete user");
 			db.delUserById(id);
 			
 			System.out.println("Get by id result");

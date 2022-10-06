@@ -8,29 +8,29 @@ import com.azure.cosmos.models.PartitionKey;
 import com.azure.cosmos.util.CosmosPagedIterable;
 
 public class CosmosDBLayer {
-	private static final String CONNECTION_URL = "https://scc22234204.documents.azure.com:443/";
-	private static final String DB_KEY = "xfCPprZp1yI5R8qTXR2JlJiELkWJyOcKGfVjsdyi62ONZJoFzY9J9j8lsCVpFLkYU5frwxqnlkSjUhQlQiAvBA==";
-	private static final String DB_NAME = "scc2223db";
+	
+	private static final String CONNECTION_URL = "https://scc56773.documents.azure.com:443/";
+	private static final String DB_KEY = "DhOA3a9yd6wy2aBU1m3ayanUHB1bge4iK3a8CyYEQdFYyrEXE7UDdSldznpI8LsyWACfn5zPRzoYbBkc8WdFoA==";
+	private static final String DB_NAME = "scc56773db";
 	
 	private static CosmosDBLayer instance;
 	
 	public static synchronized CosmosDBLayer getInstance() {
-		if (instance != null)
-			return instance;
+		if (instance == null) {
+			CosmosClient client = new CosmosClientBuilder()
+					.endpoint(CONNECTION_URL)
+					.key(DB_KEY)
+					//.directMode()
+					.gatewayMode()
+					// replace by .directMode() for better performance
+					.consistencyLevel(ConsistencyLevel.SESSION)
+					.connectionSharingAcrossClientsEnabled(true)
+					.contentResponseOnWriteEnabled(true)
+					.buildClient();
+			instance = new CosmosDBLayer(client);
+		}
 		
-		CosmosClient client = new CosmosClientBuilder()
-				.endpoint(CONNECTION_URL)
-				.key(DB_KEY)
-				//.directMode()
-				.gatewayMode()
-				// replace by .directMode() for better performance
-				.consistencyLevel(ConsistencyLevel.SESSION)
-				.connectionSharingAcrossClientsEnabled(true)
-				.contentResponseOnWriteEnabled(true)
-				.buildClient();
-		instance = new CosmosDBLayer(client);
 		return instance;
-		
 	}
 	
 	private final CosmosClient client;
@@ -42,11 +42,10 @@ public class CosmosDBLayer {
 	}
 	
 	private synchronized void init() {
-		if (db != null)
-			return;
-		db = client.getDatabase(DB_NAME);
-		users = db.getContainer("users");
-		
+		if (db == null) {
+			db = client.getDatabase(DB_NAME);
+			users = db.getContainer("users");
+		}
 	}
 	
 	public CosmosItemResponse<Object> delUserById(String id) {

@@ -6,6 +6,7 @@ import java.util.Arrays;
  * Represents a User, as stored in the database
  */
 public class UserDAO {
+	
 	private String _rid;
 	private String _ts;
 	private String id;
