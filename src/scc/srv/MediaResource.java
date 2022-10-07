@@ -3,14 +3,13 @@ package scc.srv;
 import com.azure.core.util.BinaryData;
 import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobContainerClientBuilder;
+import com.azure.storage.blob.models.BlobItem;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
+import scc.data.CosmosDBLayer;
 import scc.utils.Hash;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Resource for managing media files, such as images.
@@ -25,8 +24,6 @@ public class MediaResource {
 			.containerName("images")
 			.buildClient();
 	
-	Map<String, byte[]> map = new HashMap<>();
-	
 	/**
 	 * Post a new image. The id of the image is its hash.
 	 */
@@ -37,7 +34,6 @@ public class MediaResource {
 	public String upload(byte[] contents) {
 		try {
 			String key = Hash.of(contents);
-			map.put(key, contents);
 			containerClient.getBlobClient(key).upload(BinaryData.fromBytes(contents));
 			return key;
 		}
@@ -71,6 +67,6 @@ public class MediaResource {
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<String> list() {
-		return new ArrayList<>(map.keySet());
+		return new ArrayList<>(containerClient.listBlobs().stream().map(BlobItem::getName).toList());
 	}
 }

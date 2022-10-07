@@ -22,6 +22,10 @@ public class User {
 		this.channelIds = channelIds;
 	}
 	
+	public User(UserDAO u) {
+		this(u.getId(), u.getName(), u.getPwd(), u.getPhotoId(), u.getChannelIds());
+	}
+	
 	public String getId() {
 		return id;
 	}

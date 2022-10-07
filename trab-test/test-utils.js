@@ -4,14 +4,15 @@
  * Exported functions to be used in the testing scripts.
  */
 module.exports = {
-  uploadImageBody,
-  genNewUser,
-  genNewUserReply
+  	uploadImageBody,
+	processUploadReply,
+	selectImageToDownload,
+ 	genNewUser,
+  	genNewUserReply
 }
 
-
-const Faker = require('faker')
-const fs = require('fs')
+const faker = require('faker');
+const fs = require('fs');
 
 var imagesIds = []
 var images = []
@@ -111,11 +112,11 @@ function selectUser(context, events, done) {
  * Generate data for a new user using Faker
  */
 function genNewUser(context, events, done) {
-	const first = `${Faker.name.firstName()}`
-	const last = `${Faker.name.lastName()}`
+	const first = `${faker.name.firstName()}`
+	const last = `${faker.name.lastName()}`
 	context.vars.id = first + "." + last
 	context.vars.name = first + " " + last
-	context.vars.pwd = `${Faker.internet.password()}`
+	context.vars.pwd = `${faker.internet.password()}`
 	return done()
 }
 
