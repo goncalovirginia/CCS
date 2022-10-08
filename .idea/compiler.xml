@@ -8,6 +8,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="CCS-Labs" />
         <module name="CCS-Lab1" />
+        <module name="scc2223-lab3" />
       </profile>
     </annotationProcessing>
   </component>

@@ -11,7 +11,7 @@ module.exports = {
   	genNewUserReply
 }
 
-const faker = require('faker');
+const Faker = require('faker');
 const fs = require('fs');
 
 let imagesIds = []
@@ -105,11 +105,11 @@ function selectUser(context, events, done) {
  * Generate data for a new user using Faker
  */
 function genNewUser(context, events, done) {
-	const first = faker.name.firstName()
-	const last = faker.name.lastName()
+	const first = Faker.name.firstName()
+	const last = Faker.name.lastName()
 	context.vars.id = first + "." + last
 	context.vars.name = first + " " + last
-	context.vars.pwd = faker.internet.password()
+	context.vars.pwd = Faker.internet.password()
 	return done()
 }
 
