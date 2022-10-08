@@ -14,20 +14,19 @@ module.exports = {
 const faker = require('faker');
 const fs = require('fs');
 
-var imagesIds = []
-var images = []
-var users = []
+let imagesIds = []
+let images = []
+let users = []
 
 // All endpoints starting with the following prefixes will be aggregated in the same for the statistics
-var statsPrefix = [ ["/rest/media/","GET"],
+let statsPrefix = [ ["/rest/media/","GET"],
 			["/rest/media","POST"],
 			["/rest/user/","GET"],
 	]
 
 // Function used to compress statistics
 global.myProcessEndpoint = function( str, method) {
-	var i = 0;
-	for( i = 0; i < statsPrefix.length; i++) {
+	for(let i = 0; i < statsPrefix.length; i++) {
 		if( str.startsWith( statsPrefix[i][0]) && method == statsPrefix[i][1])
 			return method + ":" + statsPrefix[i][0];
 	}
@@ -46,20 +45,14 @@ function random( val){
 
 // Loads data about images from disk
 function loadData() {
-	var i
-	var basefile
-	if( fs.existsSync( '/images')) 
-		basefile = '/images/cats.'
-	else
-		basefile =  'images/cats.'	
-	for( i = 1; i <= 40 ; i++) {
-		var img  = fs.readFileSync(basefile + i + '.jpeg')
-		images.push( img)
+	let basefile = fs.existsSync('/images') ? '/images/cats.' : 'images/cats.';
+
+	for(let i = 1; i <= 40 ; i++) {
+		images.push(fs.readFileSync(basefile + i + '.jpeg'))
 	}
-	var str;
-	if( fs.existsSync('users.data')) {
-		str = fs.readFileSync('users.data','utf8')
-		users = JSON.parse(str)
+
+	if(fs.existsSync('users.data')) {
+		users = JSON.parse(fs.readFileSync('users.data','utf8'))
 	} 
 }
 
@@ -112,14 +105,13 @@ function selectUser(context, events, done) {
  * Generate data for a new user using Faker
  */
 function genNewUser(context, events, done) {
-	const first = `${faker.name.firstName()}`
-	const last = `${faker.name.lastName()}`
+	const first = faker.name.firstName()
+	const last = faker.name.lastName()
 	context.vars.id = first + "." + last
 	context.vars.name = first + " " + last
-	context.vars.pwd = `${faker.internet.password()}`
+	context.vars.pwd = faker.internet.password()
 	return done()
 }
-
 
 /**
  * Process reply for of new users to store the id on file

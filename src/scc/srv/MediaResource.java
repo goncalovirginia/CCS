@@ -6,7 +6,6 @@ import com.azure.storage.blob.BlobContainerClientBuilder;
 import com.azure.storage.blob.models.BlobItem;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
-import scc.data.CosmosDBLayer;
 import scc.utils.Hash;
 
 import java.util.*;
