@@ -1,6 +1,7 @@
 package scc.srv;
 
 import com.azure.core.util.BinaryData;
+import com.azure.cosmos.implementation.ConflictException;
 import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobContainerClientBuilder;
 import com.azure.storage.blob.models.BlobItem;
@@ -31,15 +32,12 @@ public class MediaResource {
 	@Consumes(MediaType.APPLICATION_OCTET_STREAM)
 	@Produces(MediaType.APPLICATION_JSON)
 	public String upload(byte[] contents) {
+		String key = Hash.of(contents);
 		try {
-			String key = Hash.of(contents);
-			containerClient.getBlobClient(key).upload(BinaryData.fromBytes(contents));
-			return key;
+			containerClient.getBlobClient(key).upload(BinaryData.fromBytes(contents), true);
 		}
-		catch (Exception e) {
-			e.printStackTrace();
-			throw new ServiceUnavailableException();
-		}
+		catch (Exception ignored) {}
+		return key;
 	}
 	
 	/**
@@ -50,13 +48,7 @@ public class MediaResource {
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
 	public byte[] download(@PathParam("id") String id) {
-		try {
-			return containerClient.getBlobClient(id).downloadContent().toBytes();
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-			throw new ServiceUnavailableException();
-		}
+		return containerClient.getBlobClient(id).downloadContent().toBytes();
 	}
 	
 	/**
@@ -68,4 +60,5 @@ public class MediaResource {
 	public List<String> list() {
 		return new ArrayList<>(containerClient.listBlobs().stream().map(BlobItem::getName).toList());
 	}
+	
 }
