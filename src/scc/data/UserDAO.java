@@ -15,15 +15,14 @@ public class UserDAO {
 	private String photoId;
 	private String[] channelIds;
 	
-	public UserDAO() {
-	}
+	public UserDAO() {}
 	
 	public UserDAO(User u) {
 		this(u.getId(), u.getName(), u.getPwd(), u.getPhotoId(), u.getChannelIds());
 	}
 	
 	public UserDAO(String id, String name, String pwd, String photoId, String[] channelIds) {
-		super();
+		this();
 		this.id = id;
 		this.name = name;
 		this.pwd = pwd;
