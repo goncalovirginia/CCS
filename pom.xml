@@ -3,7 +3,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">  
   <modelVersion>4.0.0</modelVersion>  
   <groupId>pt.unl.fct.di.scc</groupId>  
-  <artifactId>scc2223-lab3</artifactId>
+  <artifactId>scc2223-project</artifactId>
   <version>1.0</version>  
   <packaging>war</packaging>  
   <properties> 
@@ -86,6 +86,11 @@
       <artifactId>resteasy-jackson2-provider</artifactId>
       <version>6.2.0.Final</version>
     </dependency>
+    <dependency>
+			<groupId>redis.clients</groupId>
+			<artifactId>jedis</artifactId>
+			<version>4.2.3</version>
+		</dependency>
   </dependencies>  
   <build> 
     <sourceDirectory>src</sourceDirectory>  
@@ -138,8 +143,8 @@
               </resource> 
             </resources> 
           </deployment>  
-          <resourceGroup>scc-backend-rg-56773</resourceGroup>  
-          <appName>scc-backend-56773</appName> 
+          <resourceGroup>scc-backend-rg-64813</resourceGroup>  
+          <appName>scc-backend-56773-64783-64813</appName> 
         </configuration> 
       </plugin> 
     </plugins> 
