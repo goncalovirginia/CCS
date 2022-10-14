@@ -2,11 +2,12 @@ package scc.cache;
 
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
+import scc.utils.AzureProperties;
 
 public class RedisCache {
 	
-	private static final String REDIS_HOSTNAME = "scc56773.redis.cache.windows.net";
-	private static final String REDIS_KEY = "KAvpM7YzqoxVHFfz28hkuPvYsdSivDNRrAzCaGmhREs=";
+	private static final String REDIS_URL = System.getenv(AzureProperties.REDIS_URL);
+	private static final String REDIS_KEY = System.getenv(AzureProperties.REDIS_KEY);
 	
 	private static JedisPool instance;
 	
@@ -21,7 +22,7 @@ public class RedisCache {
 			poolConfig.setTestWhileIdle(true);
 			poolConfig.setNumTestsPerEvictionRun(3);
 			poolConfig.setBlockWhenExhausted(true);
-			instance = new JedisPool(poolConfig, REDIS_HOSTNAME, 6380, 1000, REDIS_KEY, true);
+			instance = new JedisPool(poolConfig, REDIS_URL, 6380, 1000, REDIS_KEY, true);
 		}
 		
 		return instance;

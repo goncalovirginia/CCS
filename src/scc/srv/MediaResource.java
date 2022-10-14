@@ -7,6 +7,7 @@ import com.azure.storage.blob.BlobContainerClientBuilder;
 import com.azure.storage.blob.models.BlobItem;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
+import scc.utils.AzureProperties;
 import scc.utils.Hash;
 
 import java.util.*;
@@ -17,7 +18,7 @@ import java.util.*;
 @Path("/media")
 public class MediaResource {
 	
-	private static final String STORAGE_CONNECTION_STRING = "DefaultEndpointsProtocol=https;AccountName=scc56773;AccountKey=SptJlI8OAt6QVBrEYGwaK1irSSPFC2ZJOQKBl4bTCOwgJH1F0CPtB9jmLxrbtZLmKcE0LlyxaWhV+AStBdrt8A==;EndpointSuffix=core.windows.net";
+	private static final String STORAGE_CONNECTION_STRING = System.getenv(AzureProperties.STORAGE_CONNECTION_STRING);
 	
 	private static final BlobContainerClient containerClient = new BlobContainerClientBuilder()
 			.connectionString(STORAGE_CONNECTION_STRING)

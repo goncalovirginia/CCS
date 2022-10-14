@@ -6,12 +6,13 @@ import com.azure.cosmos.models.CosmosItemResponse;
 import com.azure.cosmos.models.CosmosQueryRequestOptions;
 import com.azure.cosmos.models.PartitionKey;
 import com.azure.cosmos.util.CosmosPagedIterable;
+import scc.utils.AzureProperties;
 
 public class CosmosDBLayer {
 	
-	private static final String CONNECTION_URL = "https://scc56773.documents.azure.com:443/";
-	private static final String DB_KEY = "DhOA3a9yd6wy2aBU1m3ayanUHB1bge4iK3a8CyYEQdFYyrEXE7UDdSldznpI8LsyWACfn5zPRzoYbBkc8WdFoA==";
-	private static final String DB_NAME = "scc56773db";
+	private static final String CONNECTION_URL = System.getenv(AzureProperties.COSMOSDB_URL);
+	private static final String DB_KEY = System.getenv(AzureProperties.COSMOSDB_KEY);
+	private static final String DB_NAME = System.getenv(AzureProperties.COSMOSDB_NAME);
 	
 	private static CosmosDBLayer instance;
 	

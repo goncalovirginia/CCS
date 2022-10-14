@@ -9,13 +9,11 @@ import scc.cache.RedisCache;
 import scc.data.UserDAO;
 
 /**
- * Standalone program for accessing the database
- *
+ * Standalone program for accessing Redis cache
  */
 public class TestCache {
 	
 	public static void main(String[] args) {
-
 		try {
 			ObjectMapper mapper = new ObjectMapper();
 
@@ -33,7 +31,7 @@ public class TestCache {
 			    String res = jedis.get("user:"+id);
 		    	System.out.println("GET value = " + res);
 				
-			    Long cnt = jedis.lpush("MostRecentUsers", mapper.writeValueAsString(u));
+			    long cnt = jedis.lpush("MostRecentUsers", mapper.writeValueAsString(u));
 			    if (cnt > 5)
 			        jedis.ltrim("MostRecentUsers", 0, 4);
 			    
