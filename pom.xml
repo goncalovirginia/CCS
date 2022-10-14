@@ -143,10 +143,10 @@
               </resource> 
             </resources> 
           </deployment>  
-          <resourceGroup>scc-backend-rg-64813</resourceGroup>  
-          <appName>scc-backend-56773-64783-64813</appName> 
+          <resourceGroup>scc-backend-rg-56773</resourceGroup>
+          <appName>scc-backend-56773</appName>
         </configuration> 
-      </plugin> 
+      </plugin>
     </plugins> 
   </build> 
 </project>
