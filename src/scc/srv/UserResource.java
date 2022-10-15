@@ -33,15 +33,20 @@ public class UserResource {
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public User getUser(@PathParam("id") String id) {
-		String cacheResult = RedisCache.getCachePool().getResource().hget(USERS, id);
-		
 		try {
-			return cacheResult != null ? new ObjectMapper().readValue(cacheResult, User.class) :
-					new User(users.getUserById(id).stream().toList().get(0));
+			String cacheResult = RedisCache.getCachePool().getResource().hget(USERS, id);
+			
+			if (cacheResult != null) {
+				return new ObjectMapper().readValue(cacheResult, User.class);
+			}
+			
+			User user = new User(users.getUserById(id).stream().toList().get(0));
+			RedisCache.getCachePool().getResource().hset(USERS, user.getId(), user.toString());
+			return user;
 		}
-		catch (JsonProcessingException ignored) {}
-		
-		return null;
+		catch (Exception e) {
+			return null;
+		}
 	}
 	
 	@DELETE

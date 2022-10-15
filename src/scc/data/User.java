@@ -1,6 +1,8 @@
 package scc.data;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.util.Arrays;
 
@@ -15,8 +17,11 @@ public class User {
 	private String photoId;
 	private String[] channelIds;
 	
-	public User(@JsonProperty("id") String id, @JsonProperty("name") String name, @JsonProperty("pwd") String pwd, @JsonProperty("photoId") String photoId, @JsonProperty("channelIds") String[] channelIds) {
-		super();
+	public User() {
+	}
+	
+	public User(String id, String name, String pwd, String photoId, String[] channelIds) {
+		this();
 		this.id = id;
 		this.name = name;
 		this.pwd = pwd;

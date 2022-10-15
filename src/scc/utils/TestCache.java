@@ -3,6 +3,7 @@ package scc.utils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import redis.clients.jedis.Jedis;
 import scc.cache.RedisCache;
+import scc.data.User;
 import scc.data.UserDAO;
 
 import java.util.List;
@@ -16,6 +17,9 @@ public class TestCache {
 	public static void main(String[] args) {
 		try {
 			ObjectMapper mapper = new ObjectMapper();
+			
+			User user = mapper.readValue("{\"id\":\"Sanford.Kassulke\",\"name\":\"Sanford Kassulke\",\"pwd\":\"28PhQtyhHi63xBa\",\"photoId\":\"C60A30F49144A2830D451D30AE97B3061077C9FF\",\"channelIds\":[]}", User.class);
+			System.out.println(user);
 			
 			Locale.setDefault(Locale.US);
 			String id = "0:" + System.currentTimeMillis();
