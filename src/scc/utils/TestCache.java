@@ -18,9 +18,6 @@ public class TestCache {
 		try {
 			ObjectMapper mapper = new ObjectMapper();
 			
-			User user = mapper.readValue("{\"id\":\"Sanford.Kassulke\",\"name\":\"Sanford Kassulke\",\"pwd\":\"28PhQtyhHi63xBa\",\"photoId\":\"C60A30F49144A2830D451D30AE97B3061077C9FF\",\"channelIds\":[]}", User.class);
-			System.out.println(user);
-			
 			Locale.setDefault(Locale.US);
 			String id = "0:" + System.currentTimeMillis();
 			UserDAO u = new UserDAO();
@@ -29,6 +26,11 @@ public class TestCache {
 			u.setPwd("super_secret");
 			u.setPhotoId("0:34253455");
 			u.setChannelIds(new String[0]);
+			
+			String user = mapper.writeValueAsString(u);
+			System.out.println(user);
+			UserDAO usr = mapper.readValue(user, UserDAO.class);
+			System.out.println(usr);
 			
 			try (Jedis jedis = RedisCache.getCachePool().getResource()) {
 				jedis.hset("aaa", "bbb", "ccc");
@@ -50,6 +52,7 @@ public class TestCache {
 				
 				cnt = jedis.incr("NumUsers");
 				System.out.println("Num users : " + cnt);
+				System.out.println(jedis.flushAll());
 			}
 		}
 		catch (Exception e) {

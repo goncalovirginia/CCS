@@ -18,35 +18,28 @@ public class UserResource {
 	
 	private static final String USERS = "users";
 	private final CosmosDBLayer users = CosmosDBLayer.getInstance();
+	private static final ObjectMapper mapper = new ObjectMapper();
 	
 	@PUT
 	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public User createUser(User user) {
+	public User createUser(User user) throws JsonProcessingException {
 		users.putUser(new UserDAO(user));
-		RedisCache.getCachePool().getResource().hset(USERS, user.getId(), getUser(user.getId()).toString());
-		return user;
+		return writeToCache(getUser(user.getId()));
 	}
 	
 	@GET
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public User getUser(@PathParam("id") String id) {
-		try {
-			String cacheResult = RedisCache.getCachePool().getResource().hget(USERS, id);
-			
-			if (cacheResult != null) {
-				return new ObjectMapper().readValue(cacheResult, User.class);
-			}
-			
-			User user = new User(users.getUserById(id).stream().toList().get(0));
-			RedisCache.getCachePool().getResource().hset(USERS, user.getId(), user.toString());
-			return user;
+	public User getUser(@PathParam("id") String id) throws JsonProcessingException {
+		String cacheResult = RedisCache.getCachePool().getResource().hget(USERS, id);
+		
+		if (cacheResult != null) {
+			return mapper.readValue(cacheResult, User.class);
 		}
-		catch (Exception e) {
-			return null;
-		}
+		
+		return writeToCache(new User(users.getUserById(id).stream().toList().get(0)));
 	}
 	
 	@DELETE
@@ -55,6 +48,15 @@ public class UserResource {
 	public User deleteUser(@PathParam("id") String id) {
 		RedisCache.getCachePool().getResource().hdel(USERS, id);
 		return new User((UserDAO) users.delUserById(id).getItem());
+	}
+	
+	private User writeToCache(User user) {
+		try {
+			RedisCache.getCachePool().getResource().hset(USERS, user.getId(), mapper.writeValueAsString(user));
+		}
+		catch (Exception ignored) {
+		}
+		return user;
 	}
 	
 }
