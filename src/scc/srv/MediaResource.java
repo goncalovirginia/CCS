@@ -1,7 +1,6 @@
 package scc.srv;
 
 import com.azure.core.util.BinaryData;
-import com.azure.cosmos.implementation.ConflictException;
 import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobContainerClientBuilder;
 import com.azure.storage.blob.models.BlobItem;
@@ -10,7 +9,8 @@ import jakarta.ws.rs.core.MediaType;
 import scc.utils.AzureProperties;
 import scc.utils.Hash;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Resource for managing media files, such as images.
@@ -37,7 +37,8 @@ public class MediaResource {
 		try {
 			containerClient.getBlobClient(key).upload(BinaryData.fromBytes(contents), true);
 		}
-		catch (Exception ignored) {}
+		catch (Exception ignored) {
+		}
 		return key;
 	}
 	

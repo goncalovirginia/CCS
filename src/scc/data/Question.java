@@ -2,9 +2,9 @@ package scc.data;
 
 public class Question {
 	
-	private String auction;
-	private String user;
-	private String text;
+	private final String auction;
+	private final String user;
+	private final String text;
 	
 	public Question(String auction, String user, String text) {
 		this.auction = auction;

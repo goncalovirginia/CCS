@@ -15,7 +15,8 @@ public class UserDAO {
 	private String photoId;
 	private String[] channelIds;
 	
-	public UserDAO() {}
+	public UserDAO() {
+	}
 	
 	public UserDAO(User u) {
 		this(u.getId(), u.getName(), u.getPwd(), u.getPhotoId(), u.getChannelIds());

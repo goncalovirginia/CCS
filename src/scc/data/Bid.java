@@ -2,9 +2,9 @@ package scc.data;
 
 public class Bid {
 	
-	private String auction;
-	private String user;
-	private int amount;
+	private final String auction;
+	private final String user;
+	private final int amount;
 	
 	public Bid(String auction, String user, int amount) {
 		this.auction = auction;

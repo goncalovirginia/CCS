@@ -8,7 +8,8 @@ public class BidDAO {
 	private String user;
 	private int amount;
 	
-	public BidDAO() {}
+	public BidDAO() {
+	}
 	
 	public BidDAO(String auction, String user, int amount) {
 		this();

@@ -2,14 +2,14 @@ package scc.data;
 
 public class Auction {
 	
-	private String title;
-	private String description;
-	private String photoId;
-	private String owner;
-	private String endTime;
+	private final String title;
+	private final String description;
+	private final String photoId;
+	private final String owner;
+	private final String endTime;
 	private String winner;
-	private String status;
-	private int minPrice;
+	private final String status;
+	private final int minPrice;
 	private int winningBid;
 	
 	public Auction(String title, String description, String photoId, String owner, String endTime, String status, int minPrice) {

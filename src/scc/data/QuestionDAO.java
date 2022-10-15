@@ -8,7 +8,8 @@ public class QuestionDAO {
 	private String user;
 	private String text;
 	
-	public QuestionDAO() {}
+	public QuestionDAO() {
+	}
 	
 	public QuestionDAO(String auction, String user, String text) {
 		this();

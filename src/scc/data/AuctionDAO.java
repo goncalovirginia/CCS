@@ -14,7 +14,8 @@ public class AuctionDAO {
 	private int minPrice;
 	private int winningBid;
 	
-	public AuctionDAO() {}
+	public AuctionDAO() {
+	}
 	
 	public AuctionDAO(Auction a) {
 		this(a.getTitle(), a.getDescription(), a.getPhotoId(), a.getOwner(), a.getEndTime(), a.getStatus(), a.getMinPrice());

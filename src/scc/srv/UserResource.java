@@ -1,7 +1,11 @@
 package scc.srv;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
+import redis.clients.jedis.Jedis;
+import scc.cache.RedisCache;
 import scc.data.CosmosDBLayer;
 import scc.data.User;
 import scc.data.UserDAO;
@@ -12,6 +16,7 @@ import scc.data.UserDAO;
 @Path("/user")
 public class UserResource {
 	
+	private static final String USERS = "users";
 	private final CosmosDBLayer users = CosmosDBLayer.getInstance();
 	
 	@PUT
@@ -19,20 +24,31 @@ public class UserResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public User createUser(User user) {
-		return new User(users.putUser(new UserDAO(user)).getItem());
+		users.putUser(new UserDAO(user));
+		RedisCache.getCachePool().getResource().hset(USERS, user.getId(), getUser(user.getId()).toString());
+		return user;
 	}
 	
 	@GET
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public User getUser(@PathParam("id") String id) {
-		return new User(users.getUserById(id).stream().toList().get(0));
+		String cacheResult = RedisCache.getCachePool().getResource().hget(USERS, id);
+		
+		try {
+			return cacheResult != null ? new ObjectMapper().readValue(cacheResult, User.class) :
+					new User(users.getUserById(id).stream().toList().get(0));
+		}
+		catch (JsonProcessingException ignored) {}
+		
+		return null;
 	}
 	
 	@DELETE
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Object deleteUser(@PathParam("id") String id) {
+	public User deleteUser(@PathParam("id") String id) {
+		RedisCache.getCachePool().getResource().hdel(USERS, id);
 		return new User((UserDAO) users.delUserById(id).getItem());
 	}
 	
