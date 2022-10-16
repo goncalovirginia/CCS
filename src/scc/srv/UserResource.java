@@ -6,6 +6,7 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import redis.clients.jedis.Jedis;
 import scc.cache.RedisCache;
+import scc.data.Auction;
 import scc.data.CosmosDBLayer;
 import scc.data.User;
 import scc.data.UserDAO;
@@ -18,28 +19,34 @@ public class UserResource {
 	
 	private static final String USERS = "users";
 	private final CosmosDBLayer users = CosmosDBLayer.getInstance();
-	private static final ObjectMapper mapper = new ObjectMapper();
 	
 	@PUT
 	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public User createUser(User user) throws JsonProcessingException {
+	public User createUser(User user) {
 		users.putUser(new UserDAO(user));
-		return writeToCache(getUser(user.getId()));
+		User dbUser = getUser(user.getId());
+		return RedisCache.writeToHashmap(USERS, dbUser.getId(), dbUser);
 	}
 	
 	@GET
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public User getUser(@PathParam("id") String id) throws JsonProcessingException {
-		String cacheResult = RedisCache.getCachePool().getResource().hget(USERS, id);
+	public User getUser(@PathParam("id") String id) {
+		User cacheResult = RedisCache.readFromHashmap(USERS, id, User.class);
 		
 		if (cacheResult != null) {
-			return mapper.readValue(cacheResult, User.class);
+			return cacheResult;
 		}
 		
-		return writeToCache(new User(users.getUserById(id).stream().toList().get(0)));
+		UserDAO dbUser = users.getUserById(id);
+		
+		if (dbUser == null) {
+			throw new NotFoundException();
+		}
+		
+		return RedisCache.writeToHashmap(USERS, id, new User(dbUser));
 	}
 	
 	@DELETE
@@ -47,16 +54,13 @@ public class UserResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public User deleteUser(@PathParam("id") String id) {
 		RedisCache.getCachePool().getResource().hdel(USERS, id);
-		return new User((UserDAO) users.delUserById(id).getItem());
-	}
-	
-	private User writeToCache(User user) {
-		try {
-			RedisCache.getCachePool().getResource().hset(USERS, user.getId(), mapper.writeValueAsString(user));
+		Object dbUser = users.delUserById(id).getItem();
+		
+		if (dbUser == null) {
+			throw new NotFoundException();
 		}
-		catch (Exception ignored) {
-		}
-		return user;
+		
+		return new User((UserDAO) dbUser);
 	}
 	
 }

@@ -70,8 +70,13 @@ public class CosmosDBLayer {
 		return users.createItem(user);
 	}
 	
-	public CosmosPagedIterable<UserDAO> getUserById(String id) {
-		return users.queryItems("SELECT * FROM users WHERE users.id=\"" + id + "\"", new CosmosQueryRequestOptions(), UserDAO.class);
+	public UserDAO getUserById(String id) {
+		try {
+			return users.queryItems("SELECT * FROM users WHERE users.id=\"" + id + "\"", new CosmosQueryRequestOptions(), UserDAO.class).stream().toList().get(0);
+		}
+		catch (ArrayIndexOutOfBoundsException e) {
+			return null;
+		}
 	}
 	
 	public CosmosPagedIterable<UserDAO> getUsers() {
@@ -86,8 +91,13 @@ public class CosmosDBLayer {
 		return auctions.createItem(auction);
 	}
 	
-	public CosmosPagedIterable<AuctionDAO> getAuctionByTitle(String title) {
-		return auctions.queryItems("SELECT * FROM auctions WHERE auctions.title=\"" + title + "\"", new CosmosQueryRequestOptions(), AuctionDAO.class);
+	public AuctionDAO getAuctionByTitle(String title) {
+		try {
+			return auctions.queryItems("SELECT * FROM auctions WHERE auctions.title=\"" + title + "\"", new CosmosQueryRequestOptions(), AuctionDAO.class).stream().toList().get(0);
+		}
+		catch (ArrayIndexOutOfBoundsException e) {
+			return null;
+		}
 	}
 	
 	public CosmosItemResponse<BidDAO> putBid(BidDAO bid) {

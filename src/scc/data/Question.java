@@ -2,11 +2,15 @@ package scc.data;
 
 public class Question {
 	
-	private final String auction;
-	private final String user;
-	private final String text;
+	private String auction;
+	private String user;
+	private String text;
+	
+	public Question() {
+	}
 	
 	public Question(String auction, String user, String text) {
+		this();
 		this.auction = auction;
 		this.user = user;
 		this.text = text;
