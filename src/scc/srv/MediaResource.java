@@ -50,7 +50,12 @@ public class MediaResource {
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
 	public byte[] download(@PathParam("id") String id) {
-		return containerClient.getBlobClient(id).downloadContent().toBytes();
+		try {
+			return containerClient.getBlobClient(id).downloadContent().toBytes();
+		}
+		catch (Exception e) {
+			throw new NotFoundException();
+		}
 	}
 	
 	/**

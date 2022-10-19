@@ -3,6 +3,7 @@ package scc.utils;
 import com.azure.cosmos.models.CosmosItemResponse;
 import com.azure.cosmos.util.CosmosPagedIterable;
 import scc.data.CosmosDBLayer;
+import scc.data.User;
 import scc.data.UserDAO;
 
 import java.util.Locale;
@@ -31,14 +32,13 @@ public class TestUsers {
 			System.out.println(res.getItem());
 			
 			System.out.println("Get for id = " + id);
-			CosmosPagedIterable<UserDAO> resGet = db.getUserById(id);
-			for (UserDAO e : resGet) {
-				System.out.println(e);
-			}
+			UserDAO resGet = db.getUserById(id);
+			System.out.println(resGet);
 			
 			System.out.println("Get for all ids");
-			resGet = db.getUsers();
-			for (UserDAO e : resGet) {
+			
+			CosmosPagedIterable<UserDAO> resGetL = db.getUsers();
+			for (UserDAO e : resGetL) {
 				System.out.println(e);
 			}
 			
@@ -60,18 +60,14 @@ public class TestUsers {
 			
 			System.out.println("Get by id result");
 			resGet = db.getUserById(id);
-			for (UserDAO e : resGet) {
-				System.out.println(e);
-			}
+			System.out.println(resGet);
 			
 			System.out.println("Delete user");
 			db.delUserById(id);
 			
 			System.out.println("Get by id result");
 			resGet = db.getUserById(id);
-			for (UserDAO e : resGet) {
-				System.out.println(e);
-			}
+			System.out.println(resGet);
 			
 			db.close();
 		}

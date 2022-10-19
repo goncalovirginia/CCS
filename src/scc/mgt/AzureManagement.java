@@ -29,6 +29,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class AzureManagement {
+	
 	// Auth file location
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11
 	// TODO: This file should be created by running in the console:
@@ -43,24 +44,24 @@ public class AzureManagement {
 	// TODO: change your suffix and other names if you want
 	static final String MY_SUFFIX = "56773"; // Add your suffix here
 	
-	static final String AZURE_COSMOSDB_NAME = "scc" + MY_SUFFIX;    // Cosmos DB account name
-	static final String AZURE_COSMOSDB_DATABASE = "sccdb" + MY_SUFFIX;    // Cosmos DB database name
+	static final String AZURE_COSMOSDB_NAME = "cosmosdb" + MY_SUFFIX;    // Cosmos DB account name
+	static final String AZURE_COSMOSDB_DATABASE = "cosmosdb" + MY_SUFFIX;    // Cosmos DB database name
 	static final String[] BLOB_CONTAINERS = {"images"};    // Containers to add to the blob storage
 	
 	static final Region[] REGIONS = new Region[]{Region.EUROPE_WEST}; // Define the regions to deploy resources here
 	
 	// Name of resource group for each region
 	static final String[] AZURE_RG_REGIONS = Arrays.stream(REGIONS)
-			.map(reg -> "scc-rg-" + reg.name() + "-" + MY_SUFFIX).toArray(String[]::new);
+			.map(reg -> "rg-" + reg.name() + "-" + MY_SUFFIX).toArray(String[]::new);
 	
 	// Name of application server to be launched in each regions -- launching the application
 	// server must be done using mvn, as you have been doing
 	// TODO: this name should be the same as defined in your app
-	static final String[] AZURE_APP_NAME = Arrays.stream(REGIONS).map(reg -> "sccapp" + reg.name() + MY_SUFFIX)
+	static final String[] AZURE_APP_NAME = Arrays.stream(REGIONS).map(reg -> "app" + reg.name() + MY_SUFFIX)
 			.toArray(String[]::new);
 	
 	// Name of Blob storage account
-	static final String[] AZURE_STORAGE_NAME = Arrays.stream(REGIONS).map(reg -> "sccstorage" + reg.name() + MY_SUFFIX)
+	static final String[] AZURE_STORAGE_NAME = Arrays.stream(REGIONS).map(reg -> "storage" + reg.name() + MY_SUFFIX)
 			.toArray(String[]::new);
 	
 	// Name of Redis server to be defined
@@ -68,7 +69,7 @@ public class AzureManagement {
 			.toArray(String[]::new);
 	
 	// Name of Azure functions to be launched in each region
-	static final String[] AZURE_FUNCTIONS_NAME = Arrays.stream(REGIONS).map(reg -> "sccfun" + reg.name() + MY_SUFFIX)
+	static final String[] AZURE_FUNCTIONS_NAME = Arrays.stream(REGIONS).map(reg -> "fun" + reg.name() + MY_SUFFIX)
 			.toArray(String[]::new);
 	
 	// Name of property file with keys and URLS to access resources
@@ -439,14 +440,10 @@ public class AzureManagement {
 							createCosmosDatabase(cosmosClient, AZURE_COSMOSDB_DATABASE);
 							
 							//TODO: create the collections you have in your application
-							createCosmosCollection(cosmosClient, AZURE_COSMOSDB_DATABASE, "users", "/id",
-									null);
-							createCosmosCollection(cosmosClient, AZURE_COSMOSDB_DATABASE, "auctions", "/id",
-									null);
-							createCosmosCollection(cosmosClient, AZURE_COSMOSDB_DATABASE, "bids", "/id",
-									null);
-							createCosmosCollection(cosmosClient, AZURE_COSMOSDB_DATABASE, "questions", "/id",
-									null);
+							createCosmosCollection(cosmosClient, AZURE_COSMOSDB_DATABASE, "users", "/id", null);
+							createCosmosCollection(cosmosClient, AZURE_COSMOSDB_DATABASE, "auctions", "/id", null);
+							createCosmosCollection(cosmosClient, AZURE_COSMOSDB_DATABASE, "bids", "/id", null);
+							createCosmosCollection(cosmosClient, AZURE_COSMOSDB_DATABASE, "questions", "/id", null);
 							
 							System.err.println("Azure Cosmos DB resources created with success");
 							
