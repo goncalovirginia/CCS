@@ -17,10 +17,11 @@ const fs = require('fs');
 let imagesIds = []
 let images = []
 let users = []
+let auctions = []
 
 // All endpoints starting with the following prefixes will be aggregated in the same for the statistics
 let statsPrefix = [ ["/rest/media/","GET"],
-			["/rest/media","POST"],
+			["/rest/media","PUT"],
 			["/rest/user/","GET"],
 	]
 
@@ -123,6 +124,20 @@ function genNewUserReply(requestParams, response, context, ee, next) {
 		fs.writeFileSync('users.data', JSON.stringify(users));
 	}
     return next()
+}
+
+function genNewAuction(context, events, done) {
+	context.vars.title
+	return done();
+}
+
+function genNewAuctionReply(requestParams, response, context, ee, next) {
+	if( response.statusCode >= 200 && response.statusCode < 300 && response.body.length > 0)  {
+		let a = JSON.parse( response.body)
+		auctions.push(a)
+		fs.writeFileSync('users.data', JSON.stringify(auctions));
+	}
+	return next()
 }
 
 
