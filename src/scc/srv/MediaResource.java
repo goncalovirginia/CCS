@@ -25,6 +25,8 @@ public class MediaResource {
 			.containerName("images")
 			.buildClient();
 	
+	private static final String FILE_DOES_NOT_EXIST = "File does not exist.";
+	
 	/**
 	 * Post a new image. The id of the image is its hash.
 	 */
@@ -54,7 +56,7 @@ public class MediaResource {
 			return containerClient.getBlobClient(id).downloadContent().toBytes();
 		}
 		catch (Exception e) {
-			throw new NotFoundException();
+			throw new NotFoundException(FILE_DOES_NOT_EXIST);
 		}
 	}
 	
@@ -66,6 +68,16 @@ public class MediaResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<String> list() {
 		return new ArrayList<>(containerClient.listBlobs().stream().map(BlobItem::getName).toList());
+	}
+	
+	public boolean fileExists(String id) {
+		try {
+			containerClient.getBlobClient(id);
+			return true;
+		}
+		catch (Exception e) {
+			throw new NotFoundException(FILE_DOES_NOT_EXIST);
+		}
 	}
 	
 }

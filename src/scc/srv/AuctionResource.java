@@ -23,6 +23,8 @@ public class AuctionResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Auction createAuction(Auction auction) {
+		resourceContext.getResource(UserResource.class).getUser(auction.getOwner());
+		resourceContext.getResource(MediaResource.class).fileExists(auction.getPhotoId());
 		Auction dbAuction = new Auction(db.putAuction(new AuctionDAO(auction)).getItem());
 		return RedisCache.writeToHashmap(AUCTIONS, dbAuction.getTitle(), dbAuction);
 	}
