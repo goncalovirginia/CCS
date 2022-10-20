@@ -8,6 +8,8 @@ import com.azure.cosmos.models.PartitionKey;
 import com.azure.cosmos.util.CosmosPagedIterable;
 import scc.utils.AzureProperties;
 
+import javax.ws.rs.NotFoundException;
+
 public class CosmosDBLayer {
 	
 	private static final String CONNECTION_URL = System.getenv(AzureProperties.COSMOSDB_URL);
@@ -58,8 +60,7 @@ public class CosmosDBLayer {
 	}
 	
 	public CosmosItemResponse<Object> delUserById(String id) {
-		PartitionKey key = new PartitionKey(id);
-		return users.deleteItem(id, key, new CosmosItemRequestOptions());
+		return users.deleteItem(id, new PartitionKey(id), new CosmosItemRequestOptions());
 	}
 	
 	public CosmosItemResponse<Object> delUser(UserDAO user) {
@@ -75,7 +76,7 @@ public class CosmosDBLayer {
 			return users.queryItems("SELECT * FROM users WHERE users.id=\"" + id + "\"", new CosmosQueryRequestOptions(), UserDAO.class).stream().toList().get(0);
 		}
 		catch (ArrayIndexOutOfBoundsException e) {
-			return null;
+			throw new NotFoundException("User does not exist.");
 		}
 	}
 	
@@ -96,7 +97,7 @@ public class CosmosDBLayer {
 			return auctions.queryItems("SELECT * FROM auctions WHERE auctions.title=\"" + title + "\"", new CosmosQueryRequestOptions(), AuctionDAO.class).stream().toList().get(0);
 		}
 		catch (ArrayIndexOutOfBoundsException e) {
-			return null;
+			throw new NotFoundException("Auction does not exist.");
 		}
 	}
 	

@@ -128,13 +128,11 @@ public class AzureManagement {
 		List<StorageAccountKey> storageAccountKeys = account.getKeys();
 		storageAccountKeys = account.regenerateKey(storageAccountKeys.get(0).keyName());
 		
-		StringBuffer keyB = new StringBuffer();
-		keyB.append("DefaultEndpointsProtocol=https;AccountName=");
-		keyB.append(account.name());
-		keyB.append(";AccountKey=");
-		keyB.append(storageAccountKeys.get(0).value());
-		keyB.append(";EndpointSuffix=core.windows.net");
-		String key = keyB.toString();
+		String key = "DefaultEndpointsProtocol=https;AccountName=" +
+				account.name() +
+				";AccountKey=" +
+				storageAccountKeys.get(0).value() +
+				";EndpointSuffix=core.windows.net";
 		
 		synchronized (props) {
 			props.put("STORAGE_CONNECTION_STRING", key);
@@ -279,7 +277,7 @@ public class AzureManagement {
 				UniqueKeyPolicy uniqueKeyDef = new UniqueKeyPolicy();
 				List<UniqueKey> uniqueKeyL = new ArrayList<UniqueKey>();
 				for (String k : uniqueKeys) {
-					uniqueKeyL.add(new UniqueKey(Arrays.asList(k)));
+					uniqueKeyL.add(new UniqueKey(Collections.singletonList(k)));
 				}
 				uniqueKeyDef.setUniqueKeys(uniqueKeyL);
 				props.setUniqueKeyPolicy(uniqueKeyDef);

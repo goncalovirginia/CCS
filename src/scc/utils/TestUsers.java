@@ -3,7 +3,6 @@ package scc.utils;
 import com.azure.cosmos.models.CosmosItemResponse;
 import com.azure.cosmos.util.CosmosPagedIterable;
 import scc.data.CosmosDBLayer;
-import scc.data.User;
 import scc.data.UserDAO;
 
 import java.util.Locale;

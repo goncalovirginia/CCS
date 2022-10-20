@@ -3,7 +3,6 @@ package scc.cache;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
-import scc.data.Auction;
 import scc.utils.AzureProperties;
 
 public class RedisCache {

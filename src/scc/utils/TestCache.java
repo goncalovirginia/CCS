@@ -3,7 +3,6 @@ package scc.utils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import redis.clients.jedis.Jedis;
 import scc.cache.RedisCache;
-import scc.data.User;
 import scc.data.UserDAO;
 
 import java.util.List;
