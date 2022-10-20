@@ -1,6 +1,8 @@
 package scc.srv;
 
 import jakarta.ws.rs.*;
+import jakarta.ws.rs.container.ResourceContext;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import scc.cache.RedisCache;
 import scc.data.CosmosDBLayer;
@@ -16,11 +18,15 @@ public class UserResource {
 	private static final String USERS = "users";
 	private final CosmosDBLayer db = CosmosDBLayer.getInstance();
 	
+	@Context
+	ResourceContext resourceContext;
+	
 	@PUT
 	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public User createUser(User user) {
+		resourceContext.getResource(MediaResource.class).fileExists(user.getPhotoId());
 		User dbUser = new User(db.putUser(new UserDAO(user)).getItem());
 		return RedisCache.writeToHashmap(USERS, dbUser.getId(), dbUser);
 	}

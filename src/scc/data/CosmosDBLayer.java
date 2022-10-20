@@ -23,8 +23,8 @@ public class CosmosDBLayer {
 			CosmosClient client = new CosmosClientBuilder()
 					.endpoint(CONNECTION_URL)
 					.key(DB_KEY)
-					//.directMode()
-					.gatewayMode()
+					.directMode()
+					//.gatewayMode()
 					// replace by .directMode() for better performance
 					.consistencyLevel(ConsistencyLevel.SESSION)
 					.connectionSharingAcrossClientsEnabled(true)
@@ -75,7 +75,7 @@ public class CosmosDBLayer {
 		try {
 			return users.queryItems("SELECT * FROM users WHERE users.id=\"" + id + "\"", new CosmosQueryRequestOptions(), UserDAO.class).stream().toList().get(0);
 		}
-		catch (ArrayIndexOutOfBoundsException e) {
+		catch (Exception e) {
 			throw new NotFoundException("User does not exist.");
 		}
 	}
@@ -96,7 +96,7 @@ public class CosmosDBLayer {
 		try {
 			return auctions.queryItems("SELECT * FROM auctions WHERE auctions.title=\"" + title + "\"", new CosmosQueryRequestOptions(), AuctionDAO.class).stream().toList().get(0);
 		}
-		catch (ArrayIndexOutOfBoundsException e) {
+		catch (Exception e) {
 			throw new NotFoundException("Auction does not exist.");
 		}
 	}
