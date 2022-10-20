@@ -1,6 +1,8 @@
 package scc.srv;
 
 import jakarta.ws.rs.*;
+import jakarta.ws.rs.container.ResourceContext;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import scc.cache.RedisCache;
 import scc.data.*;
@@ -10,8 +12,11 @@ import java.util.List;
 @Path("/auction")
 public class AuctionResource {
 	
-	private static final String AUCTIONS = "auctions", BIDS = "bids", QUESTIONS = "questions";
+	private static final String AUCTIONS = "auctions";
 	private final CosmosDBLayer db = CosmosDBLayer.getInstance();
+	
+	@Context
+	ResourceContext resourceContext;
 	
 	@PUT
 	@Path("/")
@@ -37,15 +42,15 @@ public class AuctionResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Bid bid(@PathParam("id") String id, Bid bid) {
 		getAuction(id);
-		db.getUserById(bid.getUser());
-		
-		return bid;
+		resourceContext.getResource(UserResource.class).getUser(bid.getUser());
+		return new Bid(db.putBid(new BidDAO(bid)).getItem());
 	}
 	
 	@GET
 	@Path("/{id}/bid")
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<Bid> listBids(@PathParam("id") String id) {
+		getAuction(id);
 		return db.getBids(id).stream().map(Bid::new).toList();
 	}
 	
@@ -54,6 +59,8 @@ public class AuctionResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Question postQuestion(@PathParam("id") String id, Question question) {
+		getAuction(id);
+		resourceContext.getResource(UserResource.class).getUser(question.getUser());
 		return new Question(db.putQuestion(new QuestionDAO(question)).getItem());
 	}
 	
@@ -61,6 +68,7 @@ public class AuctionResource {
 	@Path("/{id}/question")
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<Question> listQuestions(@PathParam("id") String id) {
+		getAuction(id);
 		return db.getQuestions(id).stream().map(Question::new).toList();
 	}
 	
