@@ -8,7 +8,9 @@ module.exports = {
 	processUploadReply,
 	selectImageToDownload,
  	genNewUser,
-  	genNewUserReply
+  	genNewUserReply,
+	genNewAuction,
+	genNewAuctionReply
 }
 
 const Faker = require('faker');
@@ -55,6 +57,10 @@ function loadData() {
 	if(fs.existsSync('users.data')) {
 		users = JSON.parse(fs.readFileSync('users.data','utf8'))
 	} 
+
+	if(fs.existsSync('auctions.data')) {
+		auctions = JSON.parse(fs.readFileSync('auctions.data','utf8'))
+	} 
 }
 
 loadData();
@@ -91,7 +97,7 @@ function selectImageToDownload(context, events, done) {
 }
 
 /**
- * Select an image to download.
+ * Select a user.
  */
 function selectUser(context, events, done) {
 	if( userIds.length > 0) {
@@ -115,7 +121,7 @@ function genNewUser(context, events, done) {
 }
 
 /**
- * Process reply for of new users to store the id on file
+ * Process reply for new users to store the id on file
  */
 function genNewUserReply(requestParams, response, context, ee, next) {
 	if( response.statusCode >= 200 && response.statusCode < 300 && response.body.length > 0)  {
@@ -127,15 +133,24 @@ function genNewUserReply(requestParams, response, context, ee, next) {
 }
 
 function genNewAuction(context, events, done) {
-	context.vars.title
+	context.vars.title = Faker.vehicle.vehicle()
+	context.vars.description = Faker.lorem.paragraph()
+	context.vars.photoId = imagesIds.sample()
+	context.vars.owner = users.sample().title
+	context.vars.endTime = Faker.date.past()
+	context.vars.status = Faker.phone.phoneNumber()
+	context.vars.minPrice = Faker.datatype.number()
 	return done();
 }
 
+/**
+ * Process reply for new auctions to store the id on file
+ */
 function genNewAuctionReply(requestParams, response, context, ee, next) {
 	if( response.statusCode >= 200 && response.statusCode < 300 && response.body.length > 0)  {
 		let a = JSON.parse( response.body)
 		auctions.push(a)
-		fs.writeFileSync('users.data', JSON.stringify(auctions));
+		fs.writeFileSync('auctions.data', JSON.stringify(auctions));
 	}
 	return next()
 }
