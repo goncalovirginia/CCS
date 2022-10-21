@@ -4,6 +4,7 @@ public class QuestionDAO {
 	
 	private String _rid;
 	private String _ts;
+	private String id;
 	private String auction;
 	private String user;
 	private String text;
@@ -11,15 +12,16 @@ public class QuestionDAO {
 	public QuestionDAO() {
 	}
 	
-	public QuestionDAO(String auction, String user, String text) {
+	public QuestionDAO(String id, String auction, String user, String text) {
 		this();
+		this.id = id;
 		this.auction = auction;
 		this.user = user;
 		this.text = text;
 	}
 	
 	public QuestionDAO(Question q) {
-		this(q.getAuction(), q.getUser(), q.getText());
+		this(q.getId(), q.getAuction(), q.getUser(), q.getText());
 	}
 	
 	public String get_rid() {
@@ -40,5 +42,9 @@ public class QuestionDAO {
 	
 	public String getText() {
 		return text;
+	}
+	
+	public String getId() {
+		return id;
 	}
 }

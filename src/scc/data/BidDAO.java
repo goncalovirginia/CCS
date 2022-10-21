@@ -4,6 +4,7 @@ public class BidDAO {
 	
 	private String _rid;
 	private String _ts;
+	private String id;
 	private String auction;
 	private String user;
 	private int amount;
@@ -11,15 +12,16 @@ public class BidDAO {
 	public BidDAO() {
 	}
 	
-	public BidDAO(String auction, String user, int amount) {
+	public BidDAO(String id, String auction, String user, int amount) {
 		this();
+		this.id = id;
 		this.auction = auction;
 		this.user = user;
 		this.amount = amount;
 	}
 	
 	public BidDAO(Bid b) {
-		this(b.getAuction(), b.getUser(), b.getAmount());
+		this(b.getId(), b.getAuction(), b.getUser(), b.getAmount());
 	}
 	
 	public String get_rid() {
@@ -42,4 +44,7 @@ public class BidDAO {
 		return amount;
 	}
 	
+	public String getId() {
+		return id;
+	}
 }

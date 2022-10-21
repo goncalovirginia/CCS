@@ -4,6 +4,7 @@ public class AuctionDAO {
 	
 	private String _rid;
 	private String _ts;
+	private String id;
 	private String title;
 	private String description;
 	private String photoId;
@@ -18,11 +19,12 @@ public class AuctionDAO {
 	}
 	
 	public AuctionDAO(Auction a) {
-		this(a.getTitle(), a.getDescription(), a.getPhotoId(), a.getOwner(), a.getEndTime(), a.getStatus(), a.getMinPrice());
+		this(a.getId(), a.getTitle(), a.getDescription(), a.getPhotoId(), a.getOwner(), a.getEndTime(), a.getStatus(), a.getMinPrice());
 	}
 	
-	public AuctionDAO(String title, String description, String photoId, String owner, String endTime, String status, int minPrice) {
+	public AuctionDAO(String id, String title, String description, String photoId, String owner, String endTime, String status, int minPrice) {
 		this();
+		this.id = id;
 		this.title = title;
 		this.description = description;
 		this.photoId = photoId;
@@ -76,4 +78,7 @@ public class AuctionDAO {
 		return winningBid;
 	}
 	
+	public String getId() {
+		return id;
+	}
 }

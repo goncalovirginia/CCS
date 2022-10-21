@@ -2,6 +2,7 @@ package scc.data;
 
 public class Auction {
 	
+	private String id;
 	private String title;
 	private String description;
 	private String photoId;
@@ -15,8 +16,9 @@ public class Auction {
 	public Auction() {
 	}
 	
-	public Auction(String title, String description, String photoId, String owner, String endTime, String status, int minPrice) {
+	public Auction(String id, String title, String description, String photoId, String owner, String endTime, String status, int minPrice) {
 		this();
+		this.id = id;
 		this.title = title;
 		this.description = description;
 		this.photoId = photoId;
@@ -27,7 +29,7 @@ public class Auction {
 	}
 	
 	public Auction(AuctionDAO a) {
-		this(a.getTitle(), a.getDescription(), a.getPhotoId(), a.getOwner(), a.getEndTime(), a.getStatus(), a.getMinPrice());
+		this(a.getId(), a.getTitle(), a.getDescription(), a.getPhotoId(), a.getOwner(), a.getEndTime(), a.getStatus(), a.getMinPrice());
 	}
 	
 	public String getTitle() {
@@ -66,4 +68,7 @@ public class Auction {
 		return winningBid;
 	}
 	
+	public String getId() {
+		return id;
+	}
 }
