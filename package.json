@@ -2,10 +2,8 @@
   "name": "CCS",
   "version": "1.0.0",
   "dependencies": {
+    "@faker-js/faker": "^7.5.0",
     "faker": "^5.5.3",
     "faker-js": "^1.0.0"
-  },
-  "devDependencies": {
-    "@faker-js/faker": "^7.6.0"
   }
 }
