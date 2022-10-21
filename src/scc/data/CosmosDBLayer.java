@@ -76,7 +76,7 @@ public class CosmosDBLayer {
 			return users.queryItems("SELECT * FROM users WHERE users.id=\"" + id + "\"", new CosmosQueryRequestOptions(), UserDAO.class).stream().toList().get(0);
 		}
 		catch (Exception e) {
-			throw new NotFoundException("User does not exist.");
+			throw new NotFoundException();
 		}
 	}
 	
@@ -97,7 +97,7 @@ public class CosmosDBLayer {
 			return auctions.queryItems("SELECT * FROM auctions WHERE auctions.title=\"" + title + "\"", new CosmosQueryRequestOptions(), AuctionDAO.class).stream().toList().get(0);
 		}
 		catch (Exception e) {
-			throw new NotFoundException("Auction does not exist.");
+			throw new NotFoundException();
 		}
 	}
 	

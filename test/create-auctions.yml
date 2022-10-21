@@ -49,7 +49,9 @@ scenarios:
                 photoId: "{{ imageId }}"
                 owner: "{{ owner }}"
                 endTime: "{{ endTime }}"
+                winner: "{{ winner }}"
                 status: "{{ status }}"
                 minPrice: "{{ minPrice }}"
+                winningBid: "{{ winningBid }}"
               afterResponse: "genNewAuctionReply"    # capture result and store in file
         count: 50

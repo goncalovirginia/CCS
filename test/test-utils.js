@@ -133,13 +133,14 @@ function genNewUserReply(requestParams, response, context, ee, next) {
 }
 
 function genNewAuction(context, events, done) {
-	context.vars.title = Faker.vehicle.vehicle()
+	context.vars.title = Faker.name.firstName() + Faker.internet.domainWord()
 	context.vars.description = Faker.lorem.paragraph()
-	context.vars.photoId = imagesIds.sample()
-	context.vars.owner = users.sample().title
-	context.vars.endTime = Faker.date.past()
-	context.vars.status = Faker.phone.phoneNumber()
+	context.vars.owner = users.sample().id
+	context.vars.endTime = Faker.date.future()
+	context.vars.winner = null
+	context.vars.status = 'open'
 	context.vars.minPrice = Faker.datatype.number()
+	context.vars.winningBid = null
 	return done();
 }
 
