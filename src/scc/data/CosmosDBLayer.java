@@ -92,9 +92,9 @@ public class CosmosDBLayer {
 		return auctions.createItem(auction);
 	}
 	
-	public AuctionDAO getAuctionByTitle(String title) {
+	public AuctionDAO getAuctionById(String id) {
 		try {
-			return auctions.queryItems("SELECT * FROM auctions WHERE auctions.title=\"" + title + "\"", new CosmosQueryRequestOptions(), AuctionDAO.class).stream().toList().get(0);
+			return auctions.queryItems("SELECT * FROM auctions WHERE auctions.id=\"" + id + "\"", new CosmosQueryRequestOptions(), AuctionDAO.class).stream().toList().get(0);
 		}
 		catch (Exception e) {
 			throw new NotFoundException();

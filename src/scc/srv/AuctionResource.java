@@ -35,7 +35,7 @@ public class AuctionResource {
 	public Auction getAuction(@PathParam("id") String id) {
 		Auction cacheResult = RedisCache.readFromHashmap(AUCTIONS, id, Auction.class);
 		return cacheResult != null ? cacheResult :
-				RedisCache.writeToHashmap(AUCTIONS, id, new Auction(db.getAuctionByTitle(id)));
+				RedisCache.writeToHashmap(AUCTIONS, id, new Auction(db.getAuctionById(id)));
 	}
 	
 	@PUT
