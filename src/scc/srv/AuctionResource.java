@@ -4,15 +4,15 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.container.ResourceContext;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
-import scc.cache.RedisCache;
+import scc.cache.RedisLayer;
 import scc.data.*;
+import jakarta.ws.rs.core.Cookie;
 
 import java.util.List;
 
 @Path("/auction")
-public class AuctionResource {
+public class AuctionResource extends AccessControl{
 	
-	private static final String AUCTIONS = "auctions";
 	private final CosmosDBLayer db = CosmosDBLayer.getInstance();
 	
 	@Context
@@ -22,30 +22,43 @@ public class AuctionResource {
 	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Auction createAuction(Auction auction) {
-		resourceContext.getResource(UserResource.class).getUser(auction.getOwner());
-		resourceContext.getResource(MediaResource.class).fileExists(auction.getPhotoId());
-		Auction dbAuction = new Auction(db.putAuction(new AuctionDAO(auction)).getItem());
-		return RedisCache.writeToHashmap(AUCTIONS, dbAuction.getTitle(), dbAuction);
+	public Auction createAuction(@CookieParam("scc:session") Cookie session, Auction auction) {
+		try {
+			resourceContext.getResource(UserResource.class).getUser(auction.getOwner());
+			resourceContext.getResource(MediaResource.class).fileExists(auction.getPhotoId());
+			checkCookieUser(session, auction.getOwner());
+			Auction dbAuction = new Auction(db.putAuction(new AuctionDAO(auction)).getItem());
+			return RedisLayer.putAuction(dbAuction);
+		} catch( WebApplicationException e) {
+			throw e;
+		} catch( Exception e) {
+			throw new InternalServerErrorException( e);
+		}
 	}
 	
 	@GET
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Auction getAuction(@PathParam("id") String id) {
-		Auction cacheResult = RedisCache.readFromHashmap(AUCTIONS, id, Auction.class);
-		return cacheResult != null ? cacheResult :
-				RedisCache.writeToHashmap(AUCTIONS, id, new Auction(db.getAuctionById(id)));
+		Auction cacheResult = RedisLayer.getAuction(id);
+		return cacheResult != null ? cacheResult : RedisLayer.putAuction(new Auction(db.getAuctionById(id)));
 	}
 	
 	@PUT
 	@Path("/{id}/bid")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Bid bid(@PathParam("id") String id, Bid bid) {
-		getAuction(id);
-		resourceContext.getResource(UserResource.class).getUser(bid.getUser());
-		return new Bid(db.putBid(new BidDAO(bid)).getItem());
+	public Bid bid(@CookieParam("scc:session") Cookie session, @PathParam("id") String id, Bid bid) {
+		try{
+			getAuction(id);
+			resourceContext.getResource(UserResource.class).getUser(bid.getUser());
+			checkCookieUser(session, bid.getUser());
+			return new Bid(db.putBid(new BidDAO(bid)).getItem());
+		} catch( WebApplicationException e) {
+			throw e;
+		} catch( Exception e) {
+			throw new InternalServerErrorException( e);
+		}
 	}
 	
 	@GET
@@ -60,10 +73,17 @@ public class AuctionResource {
 	@Path("/{id}/question")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Question postQuestion(@PathParam("id") String id, Question question) {
-		getAuction(id);
-		resourceContext.getResource(UserResource.class).getUser(question.getUser());
-		return new Question(db.putQuestion(new QuestionDAO(question)).getItem());
+	public Question postQuestion(@CookieParam("scc:session") Cookie session, @PathParam("id") String id, Question question) {
+		try{
+			getAuction(id);
+			resourceContext.getResource(UserResource.class).getUser(question.getUser());
+			checkCookieUser(session, question.getUser());
+			return new Question(db.putQuestion(new QuestionDAO(question)).getItem());
+		} catch( WebApplicationException e) {
+			throw e;
+		} catch( Exception e) {
+			throw new InternalServerErrorException( e);
+		}
 	}
 	
 	@GET
