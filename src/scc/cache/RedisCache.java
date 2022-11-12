@@ -52,5 +52,14 @@ public class RedisCache {
 		}
 		return null;
 	}
+
+	public static <T> T deleteFromHashmap(String key, String field) {
+		try {
+			RedisCache.getCachePool().getResource().hdel(key, field);
+		}
+		catch (Exception ignored) {
+		}
+		return null;
+	}
 	
 }
