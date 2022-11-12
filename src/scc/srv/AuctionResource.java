@@ -44,6 +44,20 @@ public class AuctionResource extends AccessControl{
 		return cacheResult != null ? cacheResult : RedisLayer.putAuction(new Auction(db.getAuctionById(id)));
 	}
 	
+	@GET
+	@Path("/")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<Auction> getAuctionsEndingSoon(@PathParam("id") String id) {
+		return db.getAuctionsEndingSoon().stream().map(Auction::new).toList();
+	}
+	
+	@GET
+	@Path("/owner/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<Auction> getAuctionsByOwner(@PathParam("id") String id) {
+		return db.getAuctionsByOwner(id).stream().map(Auction::new).toList();
+	}
+	
 	@PUT
 	@Path("/{id}/bid")
 	@Consumes(MediaType.APPLICATION_JSON)

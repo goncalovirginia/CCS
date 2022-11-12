@@ -10,6 +10,8 @@ import scc.utils.AzureProperties;
 
 import javax.ws.rs.NotFoundException;
 
+import java.time.LocalDate;
+
 public class CosmosDBLayer {
 	
 	private static final String CONNECTION_URL = System.getenv(AzureProperties.COSMOSDB_URL);
@@ -99,6 +101,18 @@ public class CosmosDBLayer {
 		catch (Exception e) {
 			throw new NotFoundException();
 		}
+	}
+	
+	public CosmosPagedIterable<AuctionDAO> getAuctions() {
+		return auctions.queryItems("SELECT * FROM auctions", new CosmosQueryRequestOptions(), AuctionDAO.class);
+	}
+	
+	public CosmosPagedIterable<AuctionDAO> getAuctionsEndingSoon() {
+		return auctions.queryItems("SELECT * FROM auctions WHERE auction.status=\"open\" AND DATEDIFF(CURDATE(), auction.endTime)<=2", new CosmosQueryRequestOptions(), AuctionDAO.class);
+	}
+	
+	public CosmosPagedIterable<AuctionDAO> getAuctionsByOwner(String id) {
+		return auctions.queryItems("SELECT * FROM auctions WHERE auction.owner=\"" + getUserById(id).getName() + "\"", new CosmosQueryRequestOptions(), AuctionDAO.class);
 	}
 	
 	public CosmosItemResponse<BidDAO> putBid(BidDAO bid) {
