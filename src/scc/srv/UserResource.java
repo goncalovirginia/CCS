@@ -5,7 +5,10 @@ import jakarta.ws.rs.container.ResourceContext;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import scc.cache.RedisLayer;
+import scc.data.Auction;
+import scc.data.Bid;
 import scc.data.CosmosDBLayer;
+import scc.data.Question;
 import scc.data.User;
 import scc.data.UserDAO;
 
