@@ -6,11 +6,14 @@ import java.util.UUID;
 
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
+
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Cookie;
 import jakarta.ws.rs.core.MediaType;
 import scc.data.Login;
+import scc.data.CosmosDBLayer;
 import scc.data.Session;
+import scc.data.UserDAO;
 import scc.cache.RedisLayer;
 
 @Path("/user")
@@ -22,22 +25,14 @@ public class AccessControl {
     public Response auth(Login user) {
         boolean pwdOk = false;
         
-        if(user.getPwd() != null){
+        CosmosDBLayer db = CosmosDBLayer.getInstance();
+        UserDAO usr = db.getUserById(user.getUser());
+
+        if(user.getPwd() == usr.getPwd())
             pwdOk = true;
-        }
 
         if(pwdOk) {
             String uid = UUID.randomUUID().toString();
-            /*
-            NewCookie cookie = new NewCookie.Builder("scc:session")
-            .value(uid)
-            .path("/")
-            .comment("sessionid")
-            .maxAge(3600)
-            .secure(false)
-            .httpOnly(true)
-            .build();
-            */
 
             NewCookie cookie = new NewCookie("scc:session", uid, 
             "/", null, 1, "sessionid", 
