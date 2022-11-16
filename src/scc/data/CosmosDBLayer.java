@@ -10,8 +10,6 @@ import scc.utils.AzureProperties;
 
 import javax.ws.rs.NotFoundException;
 
-import java.time.LocalDate;
-
 public class CosmosDBLayer {
 	
 	private static final String CONNECTION_URL = System.getenv(AzureProperties.COSMOSDB_URL);
@@ -62,6 +60,9 @@ public class CosmosDBLayer {
 	}
 	
 	public CosmosItemResponse<Object> delUserById(String id) {
+		questions.queryItems("UPDATE questions SET questions.user=\"Deleted User\" WHERE questions.user=\"" + getUserById(id).getName() + "\"", new CosmosQueryRequestOptions(), QuestionDAO.class);
+		bids.queryItems("UPDATE bids SET bids.user=\"Deleted User\" WHERE bids.user=\"" + getUserById(id).getName() + "\"", new CosmosQueryRequestOptions(), BidDAO.class);
+		auctions.queryItems("UPDATE auctions SET auctions.user=\"Deleted User\" WHERE auctions.user=\"" + getUserById(id).getName() + "\"", new CosmosQueryRequestOptions(), AuctionDAO.class);
 		return users.deleteItem(id, new PartitionKey(id), new CosmosItemRequestOptions());
 	}
 	
@@ -108,11 +109,11 @@ public class CosmosDBLayer {
 	}
 	
 	public CosmosPagedIterable<AuctionDAO> getAuctionsEndingSoon() {
-		return auctions.queryItems("SELECT * FROM auctions WHERE auction.status=\"open\" AND DATEDIFF(CURDATE(), auction.endTime)<=2", new CosmosQueryRequestOptions(), AuctionDAO.class);
+		return auctions.queryItems("SELECT * FROM auctions WHERE auctions.status=\"open\" AND DATEDIFF(CURDATE(), auctions.endTime)<=2", new CosmosQueryRequestOptions(), AuctionDAO.class);
 	}
 	
 	public CosmosPagedIterable<AuctionDAO> getAuctionsByOwner(String id) {
-		return auctions.queryItems("SELECT * FROM auctions WHERE auction.owner=\"" + getUserById(id).getName() + "\"", new CosmosQueryRequestOptions(), AuctionDAO.class);
+		return auctions.queryItems("SELECT * FROM auctions WHERE auctions.owner=\"" + getUserById(id).getName() + "\"", new CosmosQueryRequestOptions(), AuctionDAO.class);
 	}
 	
 	public CosmosItemResponse<BidDAO> putBid(BidDAO bid) {
@@ -123,12 +124,20 @@ public class CosmosDBLayer {
 		return bids.queryItems("SELECT * FROM bids WHERE bids.auction=\"" + auction + "\"", new CosmosQueryRequestOptions(), BidDAO.class);
 	}
 	
+	public CosmosPagedIterable<BidDAO> getBidsByOwner(String id) {
+		return bids.queryItems("SELECT * FROM bids WHERE bids.user=\"" + getUserById(id).getName() + "\"", new CosmosQueryRequestOptions(), BidDAO.class);
+	}
+	
 	public CosmosItemResponse<QuestionDAO> putQuestion(QuestionDAO question) {
 		return questions.createItem(question);
 	}
 	
 	public CosmosPagedIterable<QuestionDAO> getQuestions(String auction) {
 		return questions.queryItems("SELECT * FROM questions WHERE questions.auction=\"" + auction + "\"", new CosmosQueryRequestOptions(), QuestionDAO.class);
+	}
+	
+	public CosmosPagedIterable<QuestionDAO> getQuestionsByOwner(String id) {
+		return questions.queryItems("SELECT * FROM questions WHERE questions.owner=\"" + getUserById(id).getName() + "\"", new CosmosQueryRequestOptions(), QuestionDAO.class);
 	}
 	
 }
