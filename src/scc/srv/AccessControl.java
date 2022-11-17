@@ -29,11 +29,7 @@ public class AccessControl {
         }
         
         String uuid = UUID.randomUUID().toString();
-        
-        NewCookie cookie = new NewCookie("scc:session", uuid,
-        "/", null, 1, "sessionid",
-        3600, false);
-
+        NewCookie cookie = new NewCookie("scc:session", uuid,"/", null, 1, "sessionid",3600, false);
         RedisLayer.putSession(new Session(uuid, login.userId()));
         return Response.ok().cookie(cookie).build();
     }
