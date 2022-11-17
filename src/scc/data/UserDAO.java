@@ -1,5 +1,7 @@
 package scc.data;
 
+import scc.utils.Hash;
+
 import java.util.Arrays;
 
 /**
@@ -19,7 +21,7 @@ public class UserDAO {
 	}
 	
 	public UserDAO(User u) {
-		this(u.getId(), u.getName(), u.getPwd(), u.getPhotoId(), u.getChannelIds());
+		this(u.getId(), u.getName(), Hash.of(u.getPwd()), u.getPhotoId(), u.getChannelIds());
 	}
 	
 	public UserDAO(String id, String name, String pwd, String photoId, String[] channelIds) {
@@ -85,10 +87,6 @@ public class UserDAO {
 	
 	public void setChannelIds(String[] channelIds) {
 		this.channelIds = channelIds;
-	}
-	
-	public User toUser() {
-		return new User(id, name, pwd, photoId, channelIds == null ? null : Arrays.copyOf(channelIds, channelIds.length));
 	}
 	
 	@Override

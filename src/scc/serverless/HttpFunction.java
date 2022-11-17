@@ -17,6 +17,7 @@ import java.util.Optional;
  * Complete URL appear when deploying functions.
  */
 public class HttpFunction {
+	
 	@FunctionName("http-info")
 	public HttpResponseMessage info(@HttpTrigger(name = "req",
 			methods = {HttpMethod.GET},

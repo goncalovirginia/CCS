@@ -26,7 +26,7 @@ public class AuctionResource extends AccessControl{
 		try {
 			resourceContext.getResource(UserResource.class).getUser(auction.getOwner());
 			resourceContext.getResource(MediaResource.class).fileExists(auction.getPhotoId());
-			checkCookieUser(session, auction.getOwner());
+			checkSessionCookie(session, auction.getOwner());
 			Auction dbAuction = new Auction(db.putAuction(new AuctionDAO(auction)).getItem());
 			return RedisLayer.putAuction(dbAuction);
 		} catch( WebApplicationException e) {
@@ -47,7 +47,7 @@ public class AuctionResource extends AccessControl{
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<Auction> getAuctionsEndingSoon(@PathParam("id") String id) {
+	public List<Auction> getAuctionsEndingSoon() {
 		return db.getAuctionsEndingSoon().stream().map(Auction::new).toList();
 	}
 	
@@ -66,7 +66,7 @@ public class AuctionResource extends AccessControl{
 		try{
 			getAuction(id);
 			resourceContext.getResource(UserResource.class).getUser(bid.getUser());
-			checkCookieUser(session, bid.getUser());
+			checkSessionCookie(session, bid.getUser());
 			return new Bid(db.putBid(new BidDAO(bid)).getItem());
 		} catch( WebApplicationException e) {
 			throw e;
@@ -91,7 +91,7 @@ public class AuctionResource extends AccessControl{
 		try{
 			getAuction(id);
 			resourceContext.getResource(UserResource.class).getUser(question.getUser());
-			checkCookieUser(session, question.getUser());
+			checkSessionCookie(session, question.getUser());
 			return new Question(db.putQuestion(new QuestionDAO(question)).getItem());
 		} catch( WebApplicationException e) {
 			throw e;

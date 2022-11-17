@@ -7,15 +7,15 @@ import scc.data.User;
 public class RedisLayer extends RedisCache{
 
     private static final String AUCTIONS = "auctions";
-    private static final String SESSIONS = "usersession";
+    private static final String USER_SESSIONS = "usersessions";
     private static final String USERS = "users";
 
     public static void putSession(Session session) {
-		writeToHashmap(SESSIONS, session.getUid(), session);
+		writeToHashmap(USER_SESSIONS, session.uuid(), session);
 	}
 
     public static Session getSession(String uid) {
-        return readFromHashmap(SESSIONS, uid, Session.class);
+        return readFromHashmap(USER_SESSIONS, uid, Session.class);
 	}
 
     public static Auction putAuction(Auction auction) {
