@@ -45,7 +45,7 @@ public class AuctionResource extends AccessControl{
 	}
 	
 	@GET
-	@Path("/")
+	@Path("/ending")
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<Auction> getAuctionsEndingSoon() {
 		return db.getAuctionsEndingSoon().stream().map(Auction::new).toList();
