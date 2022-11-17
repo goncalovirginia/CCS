@@ -24,9 +24,9 @@ public class AuctionResource extends AccessControl{
 	@Produces(MediaType.APPLICATION_JSON)
 	public Auction createAuction(@CookieParam("scc:session") Cookie session, Auction auction) {
 		try {
+			checkSessionCookie(session, auction.getOwner());
 			resourceContext.getResource(UserResource.class).getUser(auction.getOwner());
 			resourceContext.getResource(MediaResource.class).fileExists(auction.getPhotoId());
-			checkSessionCookie(session, auction.getOwner());
 			Auction dbAuction = new Auction(db.putAuction(new AuctionDAO(auction)).getItem());
 			return RedisLayer.putAuction(dbAuction);
 		} catch( WebApplicationException e) {
@@ -63,16 +63,10 @@ public class AuctionResource extends AccessControl{
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Bid bid(@CookieParam("scc:session") Cookie session, @PathParam("id") String id, Bid bid) {
-		try{
-			getAuction(id);
-			resourceContext.getResource(UserResource.class).getUser(bid.getUser());
-			checkSessionCookie(session, bid.getUser());
-			return new Bid(db.putBid(new BidDAO(bid)).getItem());
-		} catch( WebApplicationException e) {
-			throw e;
-		} catch( Exception e) {
-			throw new InternalServerErrorException( e);
-		}
+		checkSessionCookie(session, bid.getUser());
+		getAuction(id);
+		resourceContext.getResource(UserResource.class).getUser(bid.getUser());
+		return new Bid(db.putBid(new BidDAO(bid)).getItem());
 	}
 	
 	@GET
@@ -88,16 +82,10 @@ public class AuctionResource extends AccessControl{
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Question postQuestion(@CookieParam("scc:session") Cookie session, @PathParam("id") String id, Question question) {
-		try{
-			getAuction(id);
-			resourceContext.getResource(UserResource.class).getUser(question.getUser());
-			checkSessionCookie(session, question.getUser());
-			return new Question(db.putQuestion(new QuestionDAO(question)).getItem());
-		} catch( WebApplicationException e) {
-			throw e;
-		} catch( Exception e) {
-			throw new InternalServerErrorException( e);
-		}
+		checkSessionCookie(session, question.getUser());
+		getAuction(id);
+		resourceContext.getResource(UserResource.class).getUser(question.getUser());
+		return new Question(db.putQuestion(new QuestionDAO(question)).getItem());
 	}
 	
 	@GET
