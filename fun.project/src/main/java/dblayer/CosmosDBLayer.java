@@ -4,12 +4,9 @@ import com.azure.cosmos.*;
 import com.azure.cosmos.models.CosmosQueryRequestOptions;
 
 import data.AuctionDAO;
-import data.UserDAO;
 import utils.AzureProperties;
 
 import java.util.List;
-
-import javax.ws.rs.NotFoundException;
 
 public class CosmosDBLayer {
 	
@@ -40,7 +37,7 @@ public class CosmosDBLayer {
 	
 	private final CosmosClient client;
 	private CosmosDatabase db;
-	private CosmosContainer users;
+	//private CosmosContainer users;
 	private CosmosContainer auctions;
 	private CosmosContainer bids;
 	private CosmosContainer questions;
@@ -53,7 +50,7 @@ public class CosmosDBLayer {
 	private synchronized void init() {
 		if (db == null) {
 			db = client.getDatabase(DB_NAME);
-			users = db.getContainer("users");
+			//users = db.getContainer("users");
 			auctions = db.getContainer("auctions");
 			bids = db.getContainer("bids");
 			questions = db.getContainer("questions");

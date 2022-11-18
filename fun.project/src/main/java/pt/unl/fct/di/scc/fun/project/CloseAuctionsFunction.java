@@ -1,7 +1,5 @@
 package pt.unl.fct.di.scc.fun.project;
 
-import java.util.List;
-
 import com.microsoft.azure.functions.ExecutionContext;
 import com.microsoft.azure.functions.annotation.FunctionName;
 import com.microsoft.azure.functions.annotation.TimerTrigger;
