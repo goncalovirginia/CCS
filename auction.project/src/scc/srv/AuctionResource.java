@@ -20,6 +20,7 @@ public class AuctionResource extends AccessControl{
 	ResourceContext resourceContext;
 	
 	@PUT
+	@POST
 	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
@@ -61,6 +62,7 @@ public class AuctionResource extends AccessControl{
 	}
 	
 	@PUT
+	@POST
 	@Path("/{id}/bid")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
@@ -80,6 +82,7 @@ public class AuctionResource extends AccessControl{
 		return db.getBids(id).stream().map(Bid::new).toList();
 	}
 	
+	@PUT
 	@POST
 	@Path("/{id}/question")
 	@Consumes(MediaType.APPLICATION_JSON)
