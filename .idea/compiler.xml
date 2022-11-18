@@ -12,5 +12,8 @@
         <module name="scc2223-lab3" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="fun.project" target="1.8" />
+    </bytecodeTargetLevel>
   </component>
 </project>
