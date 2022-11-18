@@ -14,7 +14,7 @@ import com.microsoft.azure.management.search.SearchService;
 /**
  * This class dumps the information for a given search index in the format that
  * will be used by the Search program.
- * It also create a .sh file to set the appropriate properties.
+ * It also creates a .sh file to set the appropriate properties.
  */
 public class SearchDumpProperties
 {
@@ -79,16 +79,16 @@ public class SearchDumpProperties
 						appendInfo( cmd, functionName, rgName, "SearchServiceName", searchService);
 						appendInfo( cmd, functionName, rgName, "SearchServiceAdminKey", srv.getAdminKeys().primaryKey());
 						appendInfo( cmd, functionName, rgName, "SearchServiceQueryKey", lst.get(0).key());
-						appendInfo( cmd, functionName, rgName, "SearchServiceUrl", "https://\" + searchService + \".search.windows.net");
-						appendInfo( cmd, functionName, rgName, "IndexName", "cosmosdb-index"); //TODO: replace
+						appendInfo( cmd, functionName, rgName, "SearchServiceUrl", "https://" + searchService + ".search.windows.net");
+						appendInfo( cmd, functionName, rgName, "IndexName", "cosmosdb-index");
 						appendInfo( cmd, functionName, rgName, "ApiVersion", "2020-06-30");
 					}
 					if (appName != null) {
 						appendInfo( cmd, appName, rgName, "SearchServiceName", searchService);
 						appendInfo( cmd, appName, rgName, "SearchServiceAdminKey", srv.getAdminKeys().primaryKey());
 						appendInfo( cmd, appName, rgName, "SearchServiceQueryKey", lst.get(0).key());
-						appendInfo( cmd, appName, rgName, "SearchServiceUrl", "https://\" + searchService + \".search.windows.net");
-						appendInfo( cmd, appName, rgName, "IndexName", "cosmosdb-index"); //TODO: replace
+						appendInfo( cmd, appName, rgName, "SearchServiceUrl", "https://" + searchService + ".search.windows.net");
+						appendInfo( cmd, appName, rgName, "IndexName", "cosmosdb-index");
 						appendInfo( cmd, appName, rgName, "ApiVersion", "2020-06-30");
 					}
 					synchronized (AzureManagement.class) {

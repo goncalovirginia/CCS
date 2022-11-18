@@ -61,7 +61,7 @@ public class CosmosDBLayer {
 	
 	public List<String> getAuctionsToClose() {
 		return auctions.queryItems(
-				"SELECT auctions.id FROM auctions WHERE auctions.endTime < CURRENT_DATE", new CosmosQueryRequestOpetions(), String.class
+				"SELECT auctions.id FROM auctions WHERE auctions.endTime < CURRENT_DATE", new CosmosQueryRequestOptions(), String.class
 				).stream().map(String::new).toList();
 	}
 	
