@@ -17,7 +17,7 @@ public class CloseAuctionsFunction {
     public void closeAuctions(
             @TimerTrigger(
                 name = "closeAuctions",
-                schedule = "0 0 2 * * *")
+                schedule = "0 0 0 * * *")
             String timer,
             final ExecutionContext context) {
     	CosmosDBLayer db = CosmosDBLayer.getInstance();
