@@ -5,6 +5,7 @@ import com.azure.cosmos.models.CosmosQueryRequestOptions;
 
 import data.AuctionDAO;
 import data.UserDAO;
+import utils.AzureProperties;
 
 import java.util.List;
 
@@ -12,9 +13,9 @@ import javax.ws.rs.NotFoundException;
 
 public class CosmosDBLayer {
 	
-	private static final String CONNECTION_URL = "https://cosmosdb56773.documents.azure.com:443/";
-	private static final String DB_KEY = "llmIHJgQO0ynhDNaZqeTO9YIV5dEAkpf8zzfoPth2cJeoMQgpKRkvmzvb4VUnKeXI4ETFRKBbKPXsrpUzapbCA==";
-	private static final String DB_NAME = "cosmosdb56773";
+	private static final String CONNECTION_URL = System.getenv(AzureProperties.COSMOSDB_URL);
+	private static final String DB_KEY = System.getenv(AzureProperties.COSMOSDB_KEY);
+	private static final String DB_NAME = System.getenv(AzureProperties.COSMOSDB_NAME);
 	
 	private static CosmosDBLayer instance;
 	
