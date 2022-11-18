@@ -1,28 +1,21 @@
 package pt.unl.fct.di.scc.fun.project;
 
 import com.microsoft.azure.functions.ExecutionContext;
-import com.microsoft.azure.functions.HttpMethod;
-import com.microsoft.azure.functions.HttpRequestMessage;
-import com.microsoft.azure.functions.annotation.BindingName;
 import com.microsoft.azure.functions.annotation.FunctionName;
-import com.microsoft.azure.functions.annotation.HttpTrigger;
+import com.microsoft.azure.functions.annotation.TimerTrigger;
 
 import dblayer.CosmosDBLayer;
 
-import java.util.Optional;
-
 /**
- * Azure Functions with HTTP Trigger.
+ * Azure Functions with Timer Trigger.
  */
 public class CloseAuctionsFunction {
     @FunctionName("CloseAuctions")
-    public void closeAuctionsOnUserDelete(
-            @HttpTrigger(
+    public void closeAuctions(
+            @TimerTrigger(
                 name = "closeAuctions",
-                methods = {HttpMethod.DELETE},
-                route = "rest/user/{id}")
-            HttpRequestMessage<Optional<String>> request,
-            @BindingName("id") String id,
+                schedule = "2 * * * * *")
+            String timer,
             final ExecutionContext context) {
     	CosmosDBLayer db = CosmosDBLayer.getInstance();
     	db.closeAuctions(id);
