@@ -30,8 +30,8 @@ public class RedisLayer extends RedisCache{
 		return writeToHashmap(USERS, user.getId(), user);
 	}
 
-    public static User getUser(String usrid) {
-		return readFromHashmap(USERS, usrid, User.class);
+    public static User getUser(String userId) {
+		return readFromHashmap(USERS, userId, User.class);
 	}
 
     public static void delUser(String id){
