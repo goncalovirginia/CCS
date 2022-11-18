@@ -82,15 +82,40 @@ public class AuctionResource extends AccessControl{
 		return db.getBids(id).stream().map(Bid::new).toList();
 	}
 	
-	@PUT
 	@POST
 	@Path("/{id}/question")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Question postQuestion(@CookieParam("scc:session") Cookie session, @PathParam("id") String id, Question question) {
 		validateQuestion(question);
+		if(question.getAnswer() != null || question.getAnswer() != ""){
+			throw new NotAuthorizedException("You cant create a question with an answer already");
+		}
 		checkSessionCookie(session, question.getUser());
 		getAuction(id);
+		resourceContext.getResource(UserResource.class).getUser(question.getUser());
+		return new Question(db.putQuestion(new QuestionDAO(question)).getItem());
+	}
+
+
+	@PUT
+	@Path("/{id}/question")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Question putQuestion(@CookieParam("scc:session") Cookie session, @PathParam("id") String id, Question question) {
+		validateQuestion(question);
+		checkSessionCookie(session, question.getUser());
+		getAuction(id);
+		Session s = RedisLayer.getSession(session.getValue());
+		if(s == null){
+			s = new Session(CosmosDBLayer.getInstance().getSession(session.getValue()));
+		}
+		AuctionDAO auction = db.getAuctionsByOwnerAndName(s.getUser(), question.getAuction());
+	
+		if(s.getUser() != new Auction(auction).getOwner() && question.getAnswer() != ""){
+			throw new NotAuthorizedException("Only the owner of the auction can answer the question!");
+		}
+
 		resourceContext.getResource(UserResource.class).getUser(question.getUser());
 		return new Question(db.putQuestion(new QuestionDAO(question)).getItem());
 	}
