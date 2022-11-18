@@ -70,6 +70,10 @@ public class AuctionDAO {
 		return status;
 	}
 	
+	public void setStatus(String status) {
+		this.status = status;
+	}
+	
 	public int getMinPrice() {
 		return minPrice;
 	}

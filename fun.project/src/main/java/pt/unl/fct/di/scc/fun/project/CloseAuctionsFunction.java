@@ -4,6 +4,7 @@ import com.microsoft.azure.functions.ExecutionContext;
 import com.microsoft.azure.functions.annotation.FunctionName;
 import com.microsoft.azure.functions.annotation.TimerTrigger;
 
+import data.Auction;
 import dblayer.CosmosDBLayer;
 
 /**
@@ -19,6 +20,6 @@ public class CloseAuctionsFunction {
             String timer,
             final ExecutionContext context) {
     	CosmosDBLayer db = CosmosDBLayer.getInstance();
-    	for (String id : db.getAuctionsToClose()) db.closeAuctions(id);
+    	for (Auction auction : db.getAuctionsToClose()) db.closeAuction(auction);
     }
 }
