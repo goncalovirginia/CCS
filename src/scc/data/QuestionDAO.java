@@ -1,5 +1,9 @@
 package scc.data;
 
+/**
+ * Represents a Question, as stored in the database
+ */
+
 public class QuestionDAO {
 	
 	private String _rid;

@@ -1,5 +1,3 @@
-
-
 package scc.srv;
 
 import java.util.UUID;
@@ -12,6 +10,7 @@ import jakarta.ws.rs.core.MediaType;
 import scc.data.CosmosDBLayer;
 import scc.data.Login;
 import scc.data.Session;
+import scc.data.SessionDAO;
 import scc.cache.RedisLayer;
 import scc.utils.Hash;
 
@@ -30,7 +29,10 @@ public class AccessControl {
         
         String uuid = UUID.randomUUID().toString();
         NewCookie cookie = new NewCookie("scc:session", uuid,"/", null, 1, "sessionid",3600, false);
-        RedisLayer.putSession(new Session(uuid, login.userId()));
+        Session s = new Session(uuid, login.userId());
+        Boolean flag = RedisLayer.putSession(s);
+        if(!flag)
+            CosmosDBLayer.getInstance().putSession(new SessionDAO(s));
         return Response.ok().cookie(cookie).build();
     }
 
@@ -39,16 +41,17 @@ public class AccessControl {
             throw new NotAuthorizedException("No session initialized");
         }
 
-        Session s;
-        
-        if ((s = RedisLayer.getSession(session.getValue())) == null) {
+        Session s = RedisLayer.getSession(session.getValue());
+
+        if(s == null){
+            s = new Session(CosmosDBLayer.getInstance().getSession(session.getValue()));
+        }
+
+        if (s.getUser() == null || s.getUser().length() == 0) {
             throw new NotAuthorizedException("No valid session initialized");
         }
-        if (s.user() == null || s.user().length() == 0) {
-            throw new NotAuthorizedException("No valid session initialized");
-        }
-        if (!s.user().equals(id) && !s.user().equals("admin")) {
-            throw new NotAuthorizedException("Invalid user : " + s.user());
+        if (!s.getUser().equals(id) && !s.getUser().equals("admin")) {
+            throw new NotAuthorizedException("Invalid user : " + s.getUser  ());
         }
     }
     

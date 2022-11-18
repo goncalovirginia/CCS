@@ -1,5 +1,9 @@
 package scc.data;
 
+/**
+ * Represents a Bid, as stored in the database
+ */
+
 public class BidDAO {
 	
 	private String _rid;

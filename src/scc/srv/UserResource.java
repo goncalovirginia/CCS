@@ -33,7 +33,7 @@ public class UserResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public User getUser(@PathParam("id") String id) {
 		User cacheResult = RedisLayer.getUser(id);
-		return cacheResult != null ? cacheResult : RedisLayer.putUser(new User(db.getUserById(id)));
+		return cacheResult != null ? cacheResult : new User(db.getUserById(id));
 	}
 	
 	@DELETE

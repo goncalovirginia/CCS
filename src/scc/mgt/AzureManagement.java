@@ -442,6 +442,8 @@ public class AzureManagement {
 							createCosmosCollection(cosmosClient, AZURE_COSMOSDB_DATABASE, "auctions", "/id", null);
 							createCosmosCollection(cosmosClient, AZURE_COSMOSDB_DATABASE, "bids", "/id", null);
 							createCosmosCollection(cosmosClient, AZURE_COSMOSDB_DATABASE, "questions", "/id", null);
+							if(!CREATE_REDIS)
+								createCosmosCollection(cosmosClient, AZURE_COSMOSDB_DATABASE, "sessions", "/id", null);
 							
 							System.err.println("Azure Cosmos DB resources created with success");
 							

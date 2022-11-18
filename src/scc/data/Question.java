@@ -1,5 +1,9 @@
 package scc.data;
 
+/**
+ * Represents a Question made in an action
+ */
+
 public class Question {
 	
 	private String id;
@@ -36,6 +40,11 @@ public class Question {
 	
 	public String getId() {
 		return id;
+	}
+
+	@Override
+	public String toString() {
+		return "Question [id=" + id + ", auction=" + auction + ", user=" + user + ", text=" + text + "]";
 	}
 	
 }

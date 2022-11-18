@@ -41,7 +41,7 @@ public class AuctionResource extends AccessControl{
 	@Produces(MediaType.APPLICATION_JSON)
 	public Auction getAuction(@PathParam("id") String id) {
 		Auction cacheResult = RedisLayer.getAuction(id);
-		return cacheResult != null ? cacheResult : RedisLayer.putAuction(new Auction(db.getAuctionById(id)));
+		return cacheResult != null ? cacheResult : new Auction(db.getAuctionById(id));
 	}
 	
 	@GET

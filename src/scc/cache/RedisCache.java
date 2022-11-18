@@ -7,15 +7,14 @@ import scc.utils.AzureProperties;
 
 public class RedisCache {
 	
-	private static final String REDIS_URL = System.getenv(AzureProperties.REDIS_URL);
-	private static final String REDIS_KEY = System.getenv(AzureProperties.REDIS_KEY);
-	
 	private static JedisPool instance;
 	
 	private static final ObjectMapper mapper = new ObjectMapper();
 	
 	public static synchronized JedisPool getCachePool() {
-		if (instance == null) {
+		if (instance == null && AzureProperties.REDIS_URL != null && AzureProperties.COSMOSDB_KEY != null) {
+			String REDIS_URL = System.getenv(AzureProperties.REDIS_URL);
+			String REDIS_KEY = System.getenv(AzureProperties.REDIS_KEY);
 			final JedisPoolConfig poolConfig = new JedisPoolConfig();
 			poolConfig.setMaxTotal(128);
 			poolConfig.setMaxIdle(128);

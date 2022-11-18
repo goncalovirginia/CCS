@@ -43,6 +43,7 @@ public class CosmosDBLayer {
 	private CosmosContainer auctions;
 	private CosmosContainer bids;
 	private CosmosContainer questions;
+	private CosmosContainer sessions;
 	
 	public CosmosDBLayer(CosmosClient client) {
 		this.client = client;
@@ -56,24 +57,18 @@ public class CosmosDBLayer {
 			auctions = db.getContainer("auctions");
 			bids = db.getContainer("bids");
 			questions = db.getContainer("questions");
+			sessions = db.getContainer("sessions");
 		}
 	}
-	
-	public CosmosItemResponse<Object> delUserById(String id) {
-		questions.queryItems("UPDATE questions SET questions.user=\"Deleted User\" WHERE questions.user=\"" + getUserById(id).getName() + "\"", new CosmosQueryRequestOptions(), QuestionDAO.class);
-		bids.queryItems("UPDATE bids SET bids.user=\"Deleted User\" WHERE bids.user=\"" + getUserById(id).getName() + "\"", new CosmosQueryRequestOptions(), BidDAO.class);
-		auctions.queryItems("UPDATE auctions SET auctions.owner=\"Deleted User\" WHERE auctions.owner=\"" + getUserById(id).getName() + "\"", new CosmosQueryRequestOptions(), AuctionDAO.class);
-		return users.deleteItem(id, new PartitionKey(id), new CosmosItemRequestOptions());
+
+	public void close() {
+		client.close();
 	}
-	
-	public CosmosItemResponse<Object> delUser(UserDAO user) {
-		return users.deleteItem(user, new CosmosItemRequestOptions());
-	}
-	
+
 	public CosmosItemResponse<UserDAO> putUser(UserDAO user) {
 		return users.createItem(user);
 	}
-	
+
 	public UserDAO getUserById(String id) {
 		try {
 			return users.queryItems("SELECT * FROM users WHERE users.id=\"" + id + "\"", new CosmosQueryRequestOptions(), UserDAO.class).stream().toList().get(0);
@@ -82,13 +77,33 @@ public class CosmosDBLayer {
 			throw new NotFoundException();
 		}
 	}
-	
+
 	public CosmosPagedIterable<UserDAO> getUsers() {
 		return users.queryItems("SELECT * FROM users", new CosmosQueryRequestOptions(), UserDAO.class);
 	}
 	
-	public void close() {
-		client.close();
+	public CosmosItemResponse<Object> delUser(UserDAO user) {
+		return users.deleteItem(user, new CosmosItemRequestOptions());
+	}
+
+	public CosmosItemResponse<Object> delUserById(String id) {
+		questions.queryItems("UPDATE questions SET questions.user=\"Deleted User\" WHERE questions.user=\"" + getUserById(id).getName() + "\"", new CosmosQueryRequestOptions(), QuestionDAO.class);
+		bids.queryItems("UPDATE bids SET bids.user=\"Deleted User\" WHERE bids.user=\"" + getUserById(id).getName() + "\"", new CosmosQueryRequestOptions(), BidDAO.class);
+		auctions.queryItems("UPDATE auctions SET auctions.owner=\"Deleted User\" WHERE auctions.owner=\"" + getUserById(id).getName() + "\"", new CosmosQueryRequestOptions(), AuctionDAO.class);
+		return users.deleteItem(id, new PartitionKey(id), new CosmosItemRequestOptions());
+	}
+
+	public CosmosItemResponse<SessionDAO> putSession(SessionDAO session) {
+		return sessions.createItem(session);
+	}
+
+	public SessionDAO getSession(String id) {
+		try {
+			return sessions.queryItems("SELECT * FROM sessions WHERE sessions.id=\"" + id + "\"", new CosmosQueryRequestOptions(), SessionDAO.class).stream().toList().get(0);
+		}
+		catch (Exception e) {
+			throw new NotFoundException();
+		}
 	}
 	
 	public CosmosItemResponse<AuctionDAO> putAuction(AuctionDAO auction) {

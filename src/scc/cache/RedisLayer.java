@@ -10,32 +10,38 @@ public class RedisLayer extends RedisCache{
     private static final String USER_SESSIONS = "usersessions";
     private static final String USERS = "users";
 
-    public static void putSession(Session session) {
-		writeToHashmap(USER_SESSIONS, session.uuid(), session);
+    public static boolean putSession(Session session) {
+        boolean flag = false;
+        if(getCachePool() != null){
+            writeToHashmap(USER_SESSIONS, session.getid(), session);
+            flag = true;
+        }
+        return flag;
 	}
 
     public static Session getSession(String uid) {
-        return readFromHashmap(USER_SESSIONS, uid, Session.class);
+        return (getCachePool() != null ? readFromHashmap(USER_SESSIONS, uid, Session.class) : null);
 	}
 
     public static Auction putAuction(Auction auction) {
-		return writeToHashmap(AUCTIONS, auction.getTitle(), auction);
+		return (getCachePool() != null ? writeToHashmap(AUCTIONS, auction.getTitle(), auction) : auction);
 	}
 
     public static Auction getAuction(String aid) {
-		return readFromHashmap(AUCTIONS, aid, Auction.class);
+		return (getCachePool() != null ? readFromHashmap(AUCTIONS, aid, Auction.class) : null);
 	}
 
     public static User putUser(User user) {
-		return writeToHashmap(USERS, user.getId(), user);
+		return (getCachePool() != null ? writeToHashmap(USERS, user.getId(), user) : user);
 	}
 
     public static User getUser(String usrid) {
-		return readFromHashmap(USERS, usrid, User.class);
+		return (getCachePool() != null ? readFromHashmap(USERS, usrid, User.class) : null);
 	}
 
     public static void delUser(String id){
-        deleteFromHashmap(USERS, id);
+        if(getCachePool() != null)
+            deleteFromHashmap(USERS, id);
     }
     
 }

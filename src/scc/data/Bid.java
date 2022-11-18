@@ -1,5 +1,9 @@
 package scc.data;
 
+/**
+ * Represents a Bid to a certain auction
+ */
+
 public class Bid {
 	
 	private String id;
@@ -36,6 +40,11 @@ public class Bid {
 	
 	public String getId() {
 		return id;
+	}
+
+	@Override
+	public String toString() {
+		return "Bid [id=" + id + ", auction=" + auction + ", user=" + user + ", amount=" + amount + "]";
 	}
 	
 }

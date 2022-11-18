@@ -2,8 +2,6 @@ package scc.data;
 
 import scc.utils.Hash;
 
-import java.util.Arrays;
-
 /**
  * Represents a User, as stored in the database
  */
@@ -87,12 +85,6 @@ public class UserDAO {
 	
 	public void setChannelIds(String[] channelIds) {
 		this.channelIds = channelIds;
-	}
-	
-	@Override
-	public String toString() {
-		return "UserDAO [_rid=" + _rid + ", _ts=" + _ts + ", id=" + id + ", name=" + name + ", pwd=" + pwd
-				+ ", photoId=" + photoId + ", channelIds=" + Arrays.toString(channelIds) + "]";
 	}
 	
 }

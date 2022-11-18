@@ -1,5 +1,9 @@
 package scc.data;
 
+/**
+ * Represents a Auction made by a user
+ */
+
 public class Auction {
 	
 	private String id;
@@ -70,5 +74,11 @@ public class Auction {
 	
 	public String getId() {
 		return id;
+	}
+
+	@Override
+	public String toString() {
+		return "Auction [id=" + id + ", title=" + title + ", description=" + description + ", photoId=" + photoId + 
+		", owner=" + owner + ", endTime=" + endTime + ", status=" + status + ", minPrice=" + minPrice + "]";
 	}
 }

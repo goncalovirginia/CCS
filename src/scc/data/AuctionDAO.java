@@ -1,5 +1,9 @@
 package scc.data;
 
+/**
+ * Represents a Auction, as stored in the database
+ */
+
 public class AuctionDAO {
 	
 	private String _rid;
