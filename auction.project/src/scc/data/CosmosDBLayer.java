@@ -132,7 +132,7 @@ public class CosmosDBLayer {
 	}
 
 	public AuctionDAO getAuctionsByOwnerAndName(String id, String name) {
-		return auctions.queryItems("SELECT * FROM auctions WHERE auctions.owner=\"" + getUserById(id).getName() + "\" AND auctions.name=\"" + name + "\"", new CosmosQueryRequestOptions(), AuctionDAO.class).stream().toList().get(0);
+		return auctions.queryItems("SELECT * FROM auctions WHERE auctions.owner=\"" + getUserById(id).getName() + "\" AND auctions.title=\"" + name + "\"", new CosmosQueryRequestOptions(), AuctionDAO.class).stream().toList().get(0);
 	}
 	
 	public CosmosItemResponse<BidDAO> putBid(BidDAO bid) {
