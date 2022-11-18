@@ -59,19 +59,14 @@ public class CosmosDBLayer {
 		}
 	}
 	
-	public CosmosContainer getAuctions() { return auctions; }
-	
-	public UserDAO getUserById(String id) {
-		try {
-			return users.queryItems("SELECT * FROM users WHERE users.id=\"" + id + "\"", new CosmosQueryRequestOptions(), UserDAO.class).stream().toList().get(0);
-		}
-		catch (Exception e) {
-			throw new NotFoundException();
-		}
+	public List<String> getAuctionsToClose() {
+		return auctions.queryItems(
+				"SELECT auctions.id FROM auctions WHERE auctions.endTime < CURRENT_DATE()", new CosmosQueryRequestOpetions(), String.class
+				).stream().map(String::new).toList();
 	}
 	
 	public void closeAuctions(String id) {
-		auctions.queryItems("UPDATE auctions SET auctions.status=\"closed\" WHERE auctions.owner=\"" + getUserById(id).getName() + "\"", new CosmosQueryRequestOptions(), AuctionDAO.class);			
+		auctions.queryItems("UPDATE auctions SET auctions.status=\"closed\" WHERE auctions.id=\"" + id + "\"", new CosmosQueryRequestOptions(), AuctionDAO.class);			
 	}
 	
 	
