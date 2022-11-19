@@ -27,7 +27,7 @@ scenarios:
             headers:
               Content-Type: application/json
             json:
-              user: "{{ user }}"
+              userId: "{{ user }}"
               pwd: "{{ pwd }}"
         - function: "genNewAuction"
         - put:                          # First: post image for the auction
@@ -69,7 +69,7 @@ scenarios:
               headers:
                 Content-Type: application/json
               json:
-                user: "{{ user }}"
+                userId: "{{ user }}"
                 pwd: "{{ pwd }}"
           - post:                          # New bid     
               url: "/auction/{{ auctionId }}/bid"
@@ -92,7 +92,7 @@ scenarios:
               headers:
                 Content-Type: application/json
               json:
-                user: "{{ user }}"
+                userId: "{{ user }}"
                 pwd: "{{ pwd }}"
           - post:                          # New question     
               url: "/auction/{{ auctionId }}/question"
@@ -115,12 +115,12 @@ scenarios:
               headers:
                 Content-Type: application/json
               json:
-                user: "{{ auctionUser }}"
+                userId: "{{ auctionUser }}"
                 pwd: "{{ auctionUserPwd }}"
               ifTrue: "reply"
-          - post:                          # New reply     
+          - put:                          # New reply
               url: "/auction/{{ auctionId }}/question/{{ questionId }}/reply"
-              name: "POST:/auction/*/question/*/reply"
+              name: "PUT:/auction/*/question/*/reply"
               headers:
                 Content-Type: application/json
                 Accept: application/json

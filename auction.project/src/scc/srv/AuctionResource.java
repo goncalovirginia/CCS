@@ -184,9 +184,6 @@ public class AuctionResource extends AccessControl {
 	private void validateQuestion(Question question) {
 		List<String> list = Arrays.asList("", null);
 		
-		if (list.contains(question.getId()))
-			throw new IllegalArgumentException("Answer id must not be empty!");
-		
 		if (list.contains(question.getAuction())) 
 			throw new IllegalArgumentException("Question action name must not be empty!");
 		

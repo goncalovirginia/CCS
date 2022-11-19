@@ -12,7 +12,7 @@ public class RedisCache {
 	private static final ObjectMapper mapper = new ObjectMapper();
 	
 	public static synchronized JedisPool getCachePool() {
-		if (instance == null && AzureProperties.REDIS_URL != null && AzureProperties.COSMOSDB_KEY != null) {
+		if (instance == null) {
 			String REDIS_URL = System.getenv(AzureProperties.REDIS_URL);
 			String REDIS_KEY = System.getenv(AzureProperties.REDIS_KEY);
 			final JedisPoolConfig poolConfig = new JedisPoolConfig();

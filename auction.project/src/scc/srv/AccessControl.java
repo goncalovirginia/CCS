@@ -8,10 +8,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.Cookie;
 import jakarta.ws.rs.core.MediaType;
 import scc.cache.RedisLayer;
-import scc.data.CosmosDBLayer;
-import scc.data.Login;
-import scc.data.Session;
-import scc.data.SessionDAO;
+import scc.data.*;
 import scc.utils.Hash;
 
 import javax.ws.rs.core.NewCookie;
@@ -25,8 +22,13 @@ public class AccessControl {
 	@Path("/auth")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response authLogin(Login login) {
-		if (login == null || login.userId() == null || login.pwd() == null ||
-				!RedisLayer.getUser(login.userId()).getPwd().equals(Hash.of(login.pwd())) ||
+		if (login == null || login.userId() == null || login.pwd() == null) {
+			throw new IllegalArgumentException("Empty credentials.");
+		}
+			
+		User user = RedisLayer.getUser(login.userId());
+
+		if (!(user != null && user.getPwd().equals(Hash.of(login.pwd()))) &&
 				!CosmosDBLayer.getInstance().getUserById(login.userId()).getPwd().equals(Hash.of(login.pwd()))) {
 			throw new NotAuthorizedException("Incorrect login credentials");
 		}

@@ -29,10 +29,6 @@ scenarios:
               regexp: "(.+)"
               as: "imageId"              # capture the reply as image id to be used in user creation
         - function: "genNewUser"         # Generate the needed information for the user
-        - log: "{{ id }}"
-        - log: "{{ name }}"
-        - log: "{{ pwd }}"
-        - log: "{{ imageId }}"
         - put:
             url: "/user"
             name: "PUT:/user"
