@@ -63,7 +63,7 @@ public class AuctionResource extends AccessControl {
 	@GET
 	@Path("/queryDescription")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String queryAuctionDescription(String description) {
+	public String queryAuctionDescription(@QueryParam("description") String description) {
 		return CognitiveSearchClient.queryAuctionDescription(description);
 	}
 	

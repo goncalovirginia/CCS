@@ -12,9 +12,9 @@ import java.util.Map;
 
 public class CognitiveSearchClient {
 	
-	private static final String SearchServiceQueryKey = "4P5F6wWD9JV496Gha3ahPVP4FFBktRoa7Stb3n0GS9AzSeCdUC9M"; //System.getenv(AzureProperties.SearchServiceQueryKey);
-	private static final String SearchServiceUrl = "https://cognitivesearchwesteurope56773.search.windows.net"; //System.getenv(AzureProperties.SearchServiceUrl);
-	private static final String IndexName = "cosmosdb-index"; //System.getenv(AzureProperties.IndexName);
+	private static final String SearchServiceQueryKey = System.getenv(AzureProperties.SearchServiceQueryKey);
+	private static final String SearchServiceUrl = System.getenv(AzureProperties.SearchServiceUrl);
+	private static final String IndexName = System.getenv(AzureProperties.IndexName);
 	
 	private static final SearchClient searchClient = new SearchClientBuilder()
 			.credential(new AzureKeyCredential(SearchServiceQueryKey))
