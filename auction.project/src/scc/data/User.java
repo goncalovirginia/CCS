@@ -11,22 +11,20 @@ public class User {
 	private String name;
 	private String pwd;
 	private String photoId;
-	private String[] channelIds;
 	
 	public User() {
 	}
 	
-	public User(String id, String name, String pwd, String photoId, String[] channelIds) {
+	public User(String id, String name, String pwd, String photoId) {
 		this();
 		this.id = id;
 		this.name = name;
 		this.pwd = pwd;
 		this.photoId = photoId;
-		this.channelIds = channelIds;
 	}
 	
 	public User(UserDAO u) {
-		this(u.getId(), u.getName(), u.getPwd(), u.getPhotoId(), u.getChannelIds());
+		this(u.getId(), u.getName(), u.getPwd(), u.getPhotoId());
 	}
 	
 	public String getId() {
@@ -61,18 +59,9 @@ public class User {
 		this.photoId = photoId;
 	}
 	
-	public String[] getChannelIds() {
-		return channelIds == null ? new String[0] : channelIds;
-	}
-	
-	public void setChannelIds(String[] channelIds) {
-		this.channelIds = channelIds;
-	}
-	
 	@Override
 	public String toString() {
-		return "User [id=" + id + ", name=" + name + ", pwd=" + pwd + ", photoId=" + photoId + ", channelIds="
-				+ Arrays.toString(channelIds) + "]";
+		return "User [id=" + id + ", name=" + name + ", pwd=" + pwd + ", photoId=" + photoId;
 	}
 	
 }

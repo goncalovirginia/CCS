@@ -1,5 +1,7 @@
 package scc.data;
 
+import java.util.UUID;
+
 /**
  * Represents a Auction, as stored in the database
  */
@@ -23,7 +25,7 @@ public class AuctionDAO {
 	}
 	
 	public AuctionDAO(Auction a) {
-		this(a.getId(), a.getTitle(), a.getDescription(), a.getPhotoId(), a.getOwner(), a.getEndTime(), a.getStatus(), a.getMinPrice());
+		this(UUID.randomUUID().toString(), a.getTitle(), a.getDescription(), a.getPhotoId(), a.getOwner(), a.getEndTime(), a.getStatus(), a.getMinPrice());
 	}
 	
 	public AuctionDAO(String id, String title, String description, String photoId, String owner, String endTime, String status, int minPrice) {

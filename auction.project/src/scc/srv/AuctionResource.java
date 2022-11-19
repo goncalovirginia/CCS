@@ -1,5 +1,6 @@
 package scc.srv;
 
+import com.azure.cosmos.implementation.ConflictException;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.container.ResourceContext;
 import jakarta.ws.rs.core.Context;
@@ -30,11 +31,8 @@ public class AuctionResource extends AccessControl {
 			validateAuction(auction);
 			return RedisLayer.putAuction(new Auction(db.putAuction(new AuctionDAO(auction)).getItem()));
 		}
-		catch (WebApplicationException e) {
-			throw e;
-		}
-		catch (Exception e) {
-			throw new InternalServerErrorException(e);
+		catch (ConflictException e) {
+			return createAuction(session, auction);
 		}
 	}
 	
@@ -86,10 +84,15 @@ public class AuctionResource extends AccessControl {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Bid bid(@CookieParam("scc:session") Cookie session, @PathParam("id") String id, Bid bid) {
-		checkSessionCookie(session, bid.getUser());
-		validateBid(bid);
-		resourceContext.getResource(UserResource.class).getUser(bid.getUser());
-		return new Bid(db.putBid(new BidDAO(bid)).getItem());
+		try {
+			checkSessionCookie(session, bid.getUser());
+			validateBid(bid);
+			resourceContext.getResource(UserResource.class).getUser(bid.getUser());
+			return new Bid(db.putBid(new BidDAO(bid)).getItem());
+		}
+		catch (ConflictException e) {
+			return bid(session, id, bid);
+		}
 	}
 	
 	@GET
@@ -105,26 +108,31 @@ public class AuctionResource extends AccessControl {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Question postQuestion(@CookieParam("scc:session") Cookie session, @PathParam("id") String id, Question question) {
-		checkSessionCookie(session, question.getUser());
-		validateQuestion(question, true);
-		return new Question(db.putQuestion(new QuestionDAO(question)).getItem());
+		
+		try {
+			checkSessionCookie(session, question.getUser());
+			validateQuestion(question);
+			return new Question(db.putQuestion(new QuestionDAO(question)).getItem());
+		}
+		catch (ConflictException e) {
+			return postQuestion(session, id, question);
+		}
 	}
 	
 	@PUT
-	@Path("/{id}/answer")
+	@Path("/{auctionId}/question/{questionId}/reply")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Question putAnswer(@CookieParam("scc:session") Cookie session, @PathParam("id") String id, Question question) {
-		Session s = checkSessionCookie(session, question.getUser());
-		validateQuestion(question, false);
-		
-		Auction auction = getAuction(question.getAuction());
-		
-		if (!s.getUser().equals(auction.getOwner()) && question.getAnswer() != null && !question.getAnswer().equals("")) {
-			throw new NotAuthorizedException("Only the owner of the auction can answer the question!");
+	public Question reply(@CookieParam("scc:session") Cookie session, @PathParam("auctionId") String auctionId, @PathParam("questionId") String questionId, String reply) {
+		if (auctionId == null || auctionId.equals("") || questionId == null || questionId.equals("") || reply == null || reply.equals("")) {
+			throw new IllegalArgumentException();
 		}
 		
-		return new Question(db.putQuestion(new QuestionDAO(question)).getItem());
+		Auction auction = getAuction(auctionId);
+		Session s = checkSessionCookie(session, auction.getOwner());
+		QuestionDAO question = db.getQuestion(questionId);
+		question.setAnswer(reply);
+		return new Question(db.putQuestion(question).getItem());
 	}
 	
 	@GET
@@ -139,9 +147,6 @@ public class AuctionResource extends AccessControl {
 	private void validateAuction(Auction auction) {
 		List<String> list = Arrays.asList("", null, "closed", "open");
 	
-		if (list.contains(auction.getId()))
-			throw new IllegalArgumentException("Auction id must not be empty!");
-		
 		if (list.contains(auction.getTitle())) 
 			throw new IllegalArgumentException("Auction title must not be empty!");
 		
@@ -164,9 +169,6 @@ public class AuctionResource extends AccessControl {
 	private void validateBid(Bid bid) {
 		List<String> list = Arrays.asList("", null);
 		
-		if (list.contains(bid.getId()))
-			throw new IllegalArgumentException("Bid id must not be empty!");
-		
 		if (list.contains(bid.getAuction()))
 			throw new IllegalArgumentException("Bid action name must not be empty!");
 		
@@ -179,11 +181,11 @@ public class AuctionResource extends AccessControl {
 		getAuction(bid.getId());
 	}
 	
-	private void validateQuestion(Question question, boolean isQuestion) {
+	private void validateQuestion(Question question) {
 		List<String> list = Arrays.asList("", null);
 		
-		if (list.contains(question.getId())) 
-			throw new IllegalArgumentException("Question id must not be empty!");
+		if (list.contains(question.getId()))
+			throw new IllegalArgumentException("Answer id must not be empty!");
 		
 		if (list.contains(question.getAuction())) 
 			throw new IllegalArgumentException("Question action name must not be empty!");
@@ -194,7 +196,7 @@ public class AuctionResource extends AccessControl {
 		if (list.contains(question.getText())) 
 			throw new IllegalArgumentException("Question text must not be empty!");
 		
-		if(!list.contains(question.getAnswer()) && isQuestion)
+		if (list.contains(question.getAnswer()))
 			throw new NotAuthorizedException("You cant create a question with an answer already!");
 
 		getAuction(question.getAuction());

@@ -23,7 +23,6 @@ public class TestUsers {
 			u.setName("SCC " + id);
 			u.setPwd("super_secret");
 			u.setPhotoId("0:34253455");
-			u.setChannelIds(new String[0]);
 			
 			res = db.putUser(u);
 			System.out.println("Put result");
@@ -49,7 +48,6 @@ public class TestUsers {
 			u.setName("SCC " + id);
 			u.setPwd("super_secret");
 			u.setPhotoId("0:34253455");
-			u.setChannelIds(new String[0]);
 			
 			res = db.putUser(u);
 			System.out.println("Put result");

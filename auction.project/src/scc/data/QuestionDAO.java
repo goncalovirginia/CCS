@@ -1,5 +1,7 @@
 package scc.data;
 
+import java.util.UUID;
+
 /**
  * Represents a Question, as stored in the database
  */
@@ -27,7 +29,7 @@ public class QuestionDAO {
 	}
 	
 	public QuestionDAO(Question q) {
-		this(q.getId(), q.getAuction(), q.getUser(), q.getText(), q.getAnswer());
+		this(UUID.randomUUID().toString(), q.getAuction(), q.getUser(), q.getText(), q.getAnswer());
 	}
 	
 	public String get_rid() {
@@ -57,4 +59,9 @@ public class QuestionDAO {
 	public String getId() {
 		return id;
 	}
+	
+	public void setAnswer(String answer) {
+		this.answer = answer;
+	}
+	
 }

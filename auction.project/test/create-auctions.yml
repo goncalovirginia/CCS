@@ -1,57 +1,133 @@
 config:
   target: 'https://appwesteurope56773.azurewebsites.net/rest'
+  http:
+    timeout: 10
   plugins:
-    metrics-by-endpoint: {}
+    metrics-by-endpoint:
+      useOnlyRequestNames: true  # new mode to aggregate metrics in artillery
   processor: "./test-utils.js"
   variables:
-    metricsProcessEndpoint : "myProcessEndpoint"  # function used to aggregate endpoints for statistics
+    numAuctions : 300
+    maxBids : 10  # maximum number of bids to generate for each new auction
+    maxQuestions : 2 # maximum number of questions to generate for each new auction
   phases:
-    - name: "Create auctions"    # Create users
-      duration: 1
-      arrivalCount: 1
+  - name: "Create auctions"    # Create channels
+    duration: 1
+    arrivalCount: 1
 
 scenarios:
   - name: 'Create auctions'
     weight: 1
     flow:
-      - loop:                            # let's create 50 users - loop ... count
-          - put:                          # First: post image for the user
-              url: "/media"
-              headers:
-                Content-Type: application/octet-stream
-                Accept: application/json
-              beforeRequest: "uploadImageBody"
-              capture:
-                regexp: "(.+)"
-                as: "imageId"              # capture the reply as image id to be used in user creation
-          - function: "genNewUser"         # Generate the needed information for the user
-          - put:
-              url: "/user"
+      - loop:                            # let's create numAuctions auctions - loop ... count
+        - function: "selectUserSkewed"
+        - post:                          # First: login as a user
+            url: "/user/auth"
+            name: "POST:/user/auth"
+            headers:
+              Content-Type: application/json
+            json:
+              user: "{{ user }}"
+              pwd: "{{ pwd }}"
+        - function: "genNewAuction"
+        - put:                          # First: post image for the auction
+            url: "/media"
+            name: "PUT:/media"
+            headers:
+              Content-Type: application/octet-stream
+              Accept: application/json
+            beforeRequest: "uploadImageBody"
+            capture: 
+              regexp: "(.+)"
+              as: "imageId"              # capture the reply as image id to be used in uction creation
+        - post:                          # Create auction
+            url: "/auction"
+            name: "POST:/auction"
+            headers:
+              Content-Type: application/json
+              Accept: application/json
+            json:
+              id: ""
+              description: "{{ description }}"
+              title: "{{ title }}"
+              owner: "{{ user }}"
+              imageId: "{{ imageId }}"
+              endTime: "{{ endTime }}"
+              minimumPrice: "{{ minimumPrice }}"
+              status: "{{ status }}"
+            capture:                     # Capturing auction id and store it in variable auctionId
+              - json: $.id
+                as: "auctionId"
+              - json: $.owner
+                as: "auctionUser"
+        - loop:                          # Let's add numBids bids to the auction
+          - function: "selectUserSkewed"
+          - function: "genNewBid"
+          - post:                         
+              url: "/user/auth"
+              name: "POST:/user/auth"
               headers:
                 Content-Type: application/json
-                Accept: application/json
               json:
-                id: "{{ id }}"
-                name: "{{ name }}"
+                user: "{{ user }}"
                 pwd: "{{ pwd }}"
-                photoId: "{{ imageId }}"
-                channelIds: []
-              afterResponse: "genNewUserReply"    # capture result and store in file
-          - function: "genNewAuction"
-          - put:
-              url: "/auction"
+          - post:                          # New bid     
+              url: "/auction/{{ auctionId }}/bid"
+              name: "POST:/auction/*/bid"
               headers:
                 Content-Type: application/json
                 Accept: application/json
               json:
-                title: "{{ title }}"
-                description: "{{ description }}"
-                photoId: "{{ imageId }}"
-                owner: "{{ owner }}"
-                endTime: "{{ endTime }}"
-                winner: "{{ winner }}"
-                status: "{{ status }}"
-                minPrice: "{{ minPrice }}"
-                winningBid: "{{ winningBid }}"
-              afterResponse: "genNewAuctionReply"    # capture result and store in file
-        count: 50
+                id: ""
+                auctionId: "{{ auctionId }}"
+                user: "{{ user }}"
+                value: "{{ value }}"
+          count: "{{ numBids }}"   
+        - loop:                          # Let's add numQuestions questions to the auction
+          - function: "selectUserSkewed"
+          - function: "genNewQuestion"
+          - post:                         
+              url: "/user/auth"
+              name: "POST:/user/auth"
+              headers:
+                Content-Type: application/json
+              json:
+                user: "{{ user }}"
+                pwd: "{{ pwd }}"
+          - post:                          # New question     
+              url: "/auction/{{ auctionId }}/question"
+              name: "POST:/auction/*/question"
+              headers:
+                Content-Type: application/json
+                Accept: application/json
+              json:
+                id: ""
+                auctionId: "{{ auctionId }}"
+                user: "{{ user }}"
+                text: "{{ text }}"
+              capture:                     # Capturing question id and store it in variable questionId
+                - json: $.id
+                  as: "questionId"
+          - function: "genNewQuestionReply"
+          - post:
+              url: "/user/auth"
+              name: "POST:/user/auth"
+              headers:
+                Content-Type: application/json
+              json:
+                user: "{{ auctionUser }}"
+                pwd: "{{ auctionUserPwd }}"
+              ifTrue: "reply"
+          - post:                          # New reply     
+              url: "/auction/{{ auctionId }}/question/{{ questionId }}/reply"
+              name: "POST:/auction/*/question/*/reply"
+              headers:
+                Content-Type: application/json
+                Accept: application/json
+              json:
+                reply: "{{ reply }}"
+              ifTrue: "reply"
+          count: "{{ numQuestions }}"   
+        count: "{{ numAuctions }}"
+
+

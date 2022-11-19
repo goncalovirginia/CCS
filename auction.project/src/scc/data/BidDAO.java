@@ -1,5 +1,7 @@
 package scc.data;
 
+import java.util.UUID;
+
 /**
  * Represents a Bid, as stored in the database
  */
@@ -25,7 +27,7 @@ public class BidDAO {
 	}
 	
 	public BidDAO(Bid b) {
-		this(b.getId(), b.getAuction(), b.getUser(), b.getAmount());
+		this(UUID.randomUUID().toString(), b.getAuction(), b.getUser(), b.getAmount());
 	}
 	
 	public String get_rid() {

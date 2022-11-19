@@ -171,7 +171,7 @@ public class CosmosDBLayer {
 	}
 	
 	public CosmosPagedIterable<BidDAO> getBidsByOwner(String id) {
-		return bids.queryItems("SELECT * FROM bids WHERE bids.user=\"" + getUserById(id).getName() + "\"", new CosmosQueryRequestOptions(), BidDAO.class);
+		return bids.queryItems("SELECT * FROM bids WHERE bids.user=\"" + id + "\"", new CosmosQueryRequestOptions(), BidDAO.class);
 	}
 	
 	public CosmosItemResponse<QuestionDAO> putQuestion(QuestionDAO question) {
@@ -184,7 +184,16 @@ public class CosmosDBLayer {
 	}
 	
 	public CosmosPagedIterable<QuestionDAO> getQuestionsByOwner(String id) {
-		return questions.queryItems("SELECT * FROM questions WHERE questions.owner=\"" + getUserById(id).getName() + "\"", new CosmosQueryRequestOptions(), QuestionDAO.class);
+		return questions.queryItems("SELECT * FROM questions WHERE questions.owner=\"" + id + "\"", new CosmosQueryRequestOptions(), QuestionDAO.class);
+	}
+	
+	public QuestionDAO getQuestion(String id) {
+		try {
+			return questions.queryItems("SELECT * FROM questions WHERE questions.id=\"" + id + "\"", new CosmosQueryRequestOptions(), QuestionDAO.class).stream().toList().get(0);
+		}
+		catch (Exception e) {
+			throw new NotFoundException();
+		}
 	}
 	
 	public CosmosPagedIterable<Object> getAuctionCountPerUser() {

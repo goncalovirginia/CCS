@@ -81,4 +81,5 @@ public class Auction {
 		return "Auction [id=" + id + ", title=" + title + ", description=" + description + ", photoId=" + photoId +
 				", owner=" + owner + ", endTime=" + endTime + ", status=" + status + ", minPrice=" + minPrice + "]";
 	}
+	
 }
