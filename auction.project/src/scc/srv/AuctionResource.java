@@ -94,22 +94,15 @@ public class AuctionResource extends AccessControl {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Question postAnswer(@CookieParam("scc:session") Cookie session, @PathParam("id") String id, Question question) {
-		checkSessionCookie(session, question.getUser());
+		Session s = checkSessionCookie(session, question.getUser());
 		validateQuestion(question);
 		
-		Session s = RedisLayer.getSession(session.getValue());
+		Auction auction = getAuction(question.getAuction());
 		
-		if (s == null) {
-			s = new Session(CosmosDBLayer.getInstance().getSession(session.getValue()));
-		}
-		
-		AuctionDAO auction = db.getAuctionsByOwnerAndName(s.getUser(), question.getAuction());
-		
-		if (s.getUser() != new Auction(auction).getOwner() && question.getAnswer() != "") {
+		if (!s.getUser().equals(auction.getOwner())) {
 			throw new NotAuthorizedException("Only the owner of the auction can answer the question!");
 		}
 		
-		resourceContext.getResource(UserResource.class).getUser(question.getUser());
 		return new Question(db.putQuestion(new QuestionDAO(question)).getItem());
 	}
 	

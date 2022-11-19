@@ -32,30 +32,25 @@ public class AccessControl {
 		
 		String uuid = UUID.randomUUID().toString();
 		NewCookie cookie = new NewCookie("scc:session", uuid, "/", null, 1, "sessionid", 3600, false);
-		Session s = new Session(uuid, login.userId());
-		Boolean flag = RedisLayer.putSession(s);
-		if (!flag)
-			CosmosDBLayer.getInstance().putSession(new SessionDAO(s));
+		RedisLayer.putSession(new Session(uuid, login.userId()));
 		return Response.ok().cookie(cookie).build();
 	}
 	
-	public void checkSessionCookie(Cookie session, String id) throws NotAuthorizedException {
+	public static Session checkSessionCookie(Cookie session, String id) throws NotAuthorizedException {
 		if (session == null || session.getValue() == null) {
 			throw new NotAuthorizedException("No session initialized");
 		}
 		
 		Session s = RedisLayer.getSession(session.getValue());
 		
-		if (s == null) {
-			s = new Session(CosmosDBLayer.getInstance().getSession(session.getValue()));
-		}
-		
-		if (s.getUser() == null || s.getUser().length() == 0) {
+		if (s == null || s.getUser() == null || s.getUser().length() == 0) {
 			throw new NotAuthorizedException("No valid session initialized");
 		}
 		if (!s.getUser().equals(id) && !s.getUser().equals("admin")) {
 			throw new NotAuthorizedException("Invalid user : " + s.getUser());
 		}
+		
+		return s;
 	}
 	
 }
