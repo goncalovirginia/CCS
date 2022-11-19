@@ -166,6 +166,7 @@ public class CosmosDBLayer {
 	}
 	
 	public CosmosItemResponse<QuestionDAO> putQuestion(QuestionDAO question) {
+		questions.deleteItem(question, new CosmosItemRequestOptions());
 		return questions.createItem(question);
 	}
 	
