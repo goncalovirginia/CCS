@@ -23,7 +23,7 @@ public class AccessControl {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response authLogin(Login login) {
 		if (login == null || login.userId() == null || login.pwd() == null) {
-			throw new IllegalArgumentException("Empty credentials.");
+			throw new IllegalArgumentException("Empty login credentials.");
 		}
 			
 		User user = RedisLayer.getUser(login.userId());
@@ -56,10 +56,15 @@ public class AccessControl {
 	@Path("/auth")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response authLogout(Login login) {
-		if (login == null || login.userId() == null || login.pwd() == null ||
-		!RedisLayer.getUser(login.userId()).getPwd().equals(Hash.of(login.pwd())) ||
-		!CosmosDBLayer.getInstance().getUserById(login.userId()).getPwd().equals(Hash.of(login.pwd()))) {
-			throw new NotAuthorizedException("Incorrect login credentials");
+		if (login == null || login.userId() == null || login.pwd() == null) {
+			throw new IllegalArgumentException("Empty logout credentials.");
+		}
+			
+		User user = RedisLayer.getUser(login.userId());
+
+		if (!(user != null && user.getPwd().equals(Hash.of(login.pwd()))) &&
+				!CosmosDBLayer.getInstance().getUserById(login.userId()).getPwd().equals(Hash.of(login.pwd()))) {
+			throw new NotAuthorizedException("Incorrect logout credentials");
 		}
 
 		Session s = new Session(null, login.userId());
