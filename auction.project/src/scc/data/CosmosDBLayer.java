@@ -9,21 +9,25 @@ import com.azure.cosmos.util.CosmosPagedIterable;
 import scc.utils.AzureProperties;
 
 import javax.ws.rs.NotFoundException;
-import java.util.List;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class CosmosDBLayer {
 	
 	private static final String CONNECTION_URL = System.getenv(AzureProperties.COSMOSDB_URL);
 	private static final String DB_KEY = System.getenv(AzureProperties.COSMOSDB_KEY);
 	private static final String DB_NAME = System.getenv(AzureProperties.COSMOSDB_NAME);
-	
 	private static CosmosDBLayer instance;
+	private static ArrayList<String> regions = new ArrayList<String>(Arrays.asList("West Europe", "North Europe"));
 	
 	public static synchronized CosmosDBLayer getInstance() {
 		if (instance == null) {
 			CosmosClient client = new CosmosClientBuilder()
 					.endpoint(CONNECTION_URL)
 					.key(DB_KEY)
+					.multipleWriteRegionsEnabled(true)
+					.preferredRegions(regions)
 					.directMode()
 					//.gatewayMode()
 					// replace by .directMode() for better performance
