@@ -108,7 +108,6 @@ public class AuctionResource extends AccessControl {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Question postQuestion(@CookieParam("scc:session") Cookie session, @PathParam("id") String id, Question question) {
-		
 		try {
 			checkSessionCookie(session, question.getUser());
 			validateQuestion(question);
@@ -178,7 +177,7 @@ public class AuctionResource extends AccessControl {
 		if (bid.getAmount() < 1) 
 			throw new IllegalArgumentException("Bid amount must not be lower than 1!");
 		
-		getAuction(bid.getId());
+		getAuction(bid.getAuction());
 	}
 	
 	private void validateQuestion(Question question) {
@@ -193,7 +192,7 @@ public class AuctionResource extends AccessControl {
 		if (list.contains(question.getText())) 
 			throw new IllegalArgumentException("Question text must not be empty!");
 		
-		if (list.contains(question.getAnswer()))
+		if (!list.contains(question.getAnswer()))
 			throw new NotAuthorizedException("You cant create a question with an answer already!");
 
 		getAuction(question.getAuction());
