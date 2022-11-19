@@ -101,7 +101,7 @@ public class AuctionResource extends AccessControl {
 	@Path("/{id}/answer")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Question postAnswer(@CookieParam("scc:session") Cookie session, @PathParam("id") String id, Question question) {
+	public Question putAnswer(@CookieParam("scc:session") Cookie session, @PathParam("id") String id, Question question) {
 		Session s = checkSessionCookie(session, question.getUser());
 		validateQuestion(question);
 		
