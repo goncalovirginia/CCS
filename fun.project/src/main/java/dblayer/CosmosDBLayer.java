@@ -59,6 +59,7 @@ public class CosmosDBLayer {
 
 	public void closeAuction(AuctionDAO auction) {
 		auction.setStatus("closed");
+		auctions.deleteItem(auction, new CosmosItemRequestOptions());
 		auctions.createItem(auction);
 		RedisLayer.putAuction(new Auction(auction));
 	}
