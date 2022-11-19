@@ -21,6 +21,8 @@ scenarios:
     flow:
       - loop:                            # let's create numAuctions auctions - loop ... count
         - function: "selectUserSkewed"
+        - log: "{{ user }}"
+        - log: "{{ pwd }}"
         - post:                          # First: login as a user
             url: "/user/auth"
             name: "POST:/user/auth"
