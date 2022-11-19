@@ -67,6 +67,20 @@ public class AuctionResource extends AccessControl {
 		return CognitiveSearchClient.queryAuctionDescription(description);
 	}
 	
+	@GET
+	@Path("/countPerUser")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<Object> getAuctionCountPerUser() {
+		return db.getAuctionCountPerUser().stream().toList();
+	}
+	
+	@GET
+	@Path("/trending")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<Object> getTrendingAuctions() {
+		return db.getTrendingAuctions().stream().toList();
+	}
+	
 	@POST
 	@Path("/{id}/bid")
 	@Consumes(MediaType.APPLICATION_JSON)

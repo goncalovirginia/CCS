@@ -9,6 +9,7 @@ import com.azure.cosmos.util.CosmosPagedIterable;
 import scc.utils.AzureProperties;
 
 import javax.ws.rs.NotFoundException;
+import java.util.List;
 
 public class CosmosDBLayer {
 	
@@ -44,6 +45,8 @@ public class CosmosDBLayer {
 	private CosmosContainer bids;
 	private CosmosContainer questions;
 	private CosmosContainer sessions;
+	private CosmosContainer auctionsFreq;
+	private CosmosContainer auctionsTrending;
 	
 	public CosmosDBLayer(CosmosClient client) {
 		this.client = client;
@@ -58,6 +61,8 @@ public class CosmosDBLayer {
 			bids = db.getContainer("bids");
 			questions = db.getContainer("questions");
 			sessions = db.getContainer("sessions");
+			auctionsFreq = db.getContainer("auctionsFreq");
+			auctionsTrending = db.getContainer("auctionsTrending");
 		}
 	}
 	
@@ -176,6 +181,14 @@ public class CosmosDBLayer {
 	
 	public CosmosPagedIterable<QuestionDAO> getQuestionsByOwner(String id) {
 		return questions.queryItems("SELECT * FROM questions WHERE questions.owner=\"" + getUserById(id).getName() + "\"", new CosmosQueryRequestOptions(), QuestionDAO.class);
+	}
+	
+	public CosmosPagedIterable<Object> getAuctionCountPerUser() {
+		return auctionsFreq.queryItems("SELECT * FROM auctionsFreq", new CosmosQueryRequestOptions(), Object.class);
+	}
+	
+	public CosmosPagedIterable<Object> getTrendingAuctions() {
+		return auctionsFreq.queryItems("SELECT * FROM auctionsTrending", new CosmosQueryRequestOptions(), Object.class);
 	}
 	
 }
