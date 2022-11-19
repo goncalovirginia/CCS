@@ -7,6 +7,7 @@ import jakarta.ws.rs.core.Cookie;
 import jakarta.ws.rs.core.MediaType;
 import scc.cache.RedisLayer;
 import scc.data.*;
+import scc.utils.CognitiveSearchClient;
 
 import java.util.Arrays;
 import java.util.List;
@@ -57,6 +58,13 @@ public class AuctionResource extends AccessControl {
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<Auction> getAuctionsByOwner(@PathParam("id") String id) {
 		return db.getAuctionsByOwner(id).stream().map(Auction::new).toList();
+	}
+	
+	@GET
+	@Path("/queryDescription")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String queryAuctionDescription(String description) {
+		return CognitiveSearchClient.queryAuctionDescription(description);
 	}
 	
 	@POST
