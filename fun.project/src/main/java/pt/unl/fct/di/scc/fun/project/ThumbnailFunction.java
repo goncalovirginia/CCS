@@ -21,26 +21,25 @@ import utils.AzureProperties;
  */
 public class ThumbnailFunction {
 	
-	private static final String STORAGE_CONNECTION_STRING = "DefaultEndpointsProtocol=https;AccountName=storagewesteurope56773;AccountKey=51a8nEq5n7roROGz4qdo2frhSXNveYqW5mJNEzcQpPRupPDcqLWRXIvRXBI7ZAAJJlsZ6vPHSgxG+AStOY6vaQ==;EndpointSuffix=core.windows.net";
+	private static final String STORAGE_CONNECTION_STRING = System.getenv(AzureProperties.STORAGE_CONNECTION_STRING);
 	
 	private static final BlobContainerClient thumbnailContainer = new BlobContainerClientBuilder()
 			.connectionString(STORAGE_CONNECTION_STRING)
 			.containerName("thumbnails")
 			.buildClient();
-			
-	private void uploadThumbnail(byte[] contents) {
-		thumbnailContainer.getBlobClient(Hash.of(contents)).upload(BinaryData.fromBytes(contents), true);
-	}
 	
 	@FunctionName("Thumbnail")
 	public void setThumbnail(
 			@BlobTrigger(
-					name = "blobThumbnail",
-					path = "images",
-					connection = STORAGE_CONNECTION_STRING)
-					byte[] content,
-					final ExecutionContext context
-			) throws ImageException {
-				uploadThumbnail(new IVCompressor().resizeImage(content, ImageFormats.JPG, ResizeResolution.R720P));
-			}
+				name = "blobThumbnail",
+				dataType = "binary",
+				path = "images",
+				connection = "STORAGE_CONNECTION_STRING")
+			byte[] content,
+			final ExecutionContext context) throws ImageException {
+		byte[] compressedContents = new IVCompressor().resizeImage(content, ImageFormats.JPG, ResizeResolution.R720P);
+		thumbnailContainer.getBlobClient(Hash.of(compressedContents)).upload(BinaryData.fromBytes(compressedContents), true);
+	}
+	
 }
+

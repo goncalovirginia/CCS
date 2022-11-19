@@ -61,7 +61,6 @@ public class AuctionResource extends AccessControl{
 		return db.getAuctionsByOwner(id).stream().map(Auction::new).toList();
 	}
 	
-	@PUT
 	@POST
 	@Path("/{id}/bid")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -161,7 +160,7 @@ public class AuctionResource extends AccessControl{
 	
 	public void validateBid(Bid bid){
 
-		List<String> list = Arrays.asList(new String[]{"", null});
+		List<String> list = Arrays.asList("", null);
 
 		if(list.contains(bid.getId())){
 			throw new IllegalArgumentException("Bid id must not be empty!");
