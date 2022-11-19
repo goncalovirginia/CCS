@@ -10,7 +10,6 @@ import scc.cache.RedisLayer;
 import scc.data.CosmosDBLayer;
 import scc.data.Login;
 import scc.data.Session;
-import scc.data.SessionDAO;
 import scc.utils.Hash;
 
 import javax.ws.rs.core.NewCookie;

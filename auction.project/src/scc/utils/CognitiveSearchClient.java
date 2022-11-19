@@ -5,7 +5,6 @@ import com.azure.search.documents.SearchClient;
 import com.azure.search.documents.SearchClientBuilder;
 import com.azure.search.documents.SearchDocument;
 import com.azure.search.documents.models.SearchOptions;
-import com.azure.search.documents.util.SearchPagedIterable;
 import com.azure.search.documents.util.SearchPagedResponse;
 
 import java.util.Map;
