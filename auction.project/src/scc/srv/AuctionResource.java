@@ -92,10 +92,9 @@ public class AuctionResource extends AccessControl {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Question postQuestion(@CookieParam("scc:session") Cookie session, @PathParam("id") String id, Question question) {
 		checkSessionCookie(session, question.getUser());
-		validateQuestion(question);
+		validateQuestion(question, 0);
 		return new Question(db.putQuestion(new QuestionDAO(question)).getItem());
 	}
-	
 	
 	@PUT
 	@Path("/{id}/answer")
@@ -103,11 +102,11 @@ public class AuctionResource extends AccessControl {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Question putAnswer(@CookieParam("scc:session") Cookie session, @PathParam("id") String id, Question question) {
 		Session s = checkSessionCookie(session, question.getUser());
-		validateQuestion(question);
+		validateQuestion(question, 1);
 		
 		Auction auction = getAuction(question.getAuction());
 		
-		if (!s.getUser().equals(auction.getOwner())) {
+		if (!s.getUser().equals(auction.getOwner()) && question.getAnswer() != "" && question.getAnswer() != null) {
 			throw new NotAuthorizedException("Only the owner of the auction can answer the question!");
 		}
 		
@@ -125,25 +124,25 @@ public class AuctionResource extends AccessControl {
 	
 	private void validateAuction(Auction auction) {
 		List<String> list = Arrays.asList("", null, "closed", "open");
-		
-		if (list.contains(auction.getId())) {
+	
+		if (list.contains(auction.getId()))
 			throw new IllegalArgumentException("Auction id must not be empty!");
-		}
-		if (list.contains(auction.getTitle())) {
+		
+		if (list.contains(auction.getTitle())) 
 			throw new IllegalArgumentException("Auction title must not be empty!");
-		}
-		if (list.contains(auction.getPhotoId())) {
+		
+		if (list.contains(auction.getPhotoId())) 
 			throw new IllegalArgumentException("Auction photo must not be empty!");
-		}
-		if (list.contains(auction.getEndTime())) {
+		
+		if (list.contains(auction.getEndTime())) 
 			throw new IllegalArgumentException("Auction end time must not be empty!");
-		}
-		if (!list.contains(auction.getStatus()) && !list.contains(auction.getStatus())) {
+		
+		if (!list.contains(auction.getStatus()) && !list.contains(auction.getStatus())) 
 			throw new IllegalArgumentException("Auction status must be 'open' or 'closed'");
-		}
-		if (auction.getMinPrice() < 1) {
+		
+		if (auction.getMinPrice() < 1) 
 			throw new IllegalArgumentException("Auction minimum price must not be lower than 1!");
-		}
+		
 		resourceContext.getResource(UserResource.class).getUser(auction.getOwner());
 		resourceContext.getResource(MediaResource.class).fileExists(auction.getPhotoId());
 	}
@@ -151,39 +150,39 @@ public class AuctionResource extends AccessControl {
 	private void validateBid(Bid bid) {
 		List<String> list = Arrays.asList("", null);
 		
-		if (list.contains(bid.getId())) {
+		if (list.contains(bid.getId()))
 			throw new IllegalArgumentException("Bid id must not be empty!");
-		}
-		if (list.contains(bid.getAuction())) {
+		
+		if (list.contains(bid.getAuction()))
 			throw new IllegalArgumentException("Bid action name must not be empty!");
-		}
-		if (list.contains(bid.getUser())) {
+		
+		if (list.contains(bid.getUser())) 
 			throw new IllegalArgumentException("Bid username must not be empty!");
-		}
-		if (bid.getAmount() < 1) {
+		
+		if (bid.getAmount() < 1) 
 			throw new IllegalArgumentException("Bid amount must not be lower than 1!");
-		}
+		
 		getAuction(bid.getId());
 	}
 	
-	private void validateQuestion(Question question) {
+	private void validateQuestion(Question question, int flag) {
 		List<String> list = Arrays.asList("", null);
 		
-		if (list.contains(question.getId())) {
+		if (list.contains(question.getId())) 
 			throw new IllegalArgumentException("Question id must not be empty!");
-		}
-		if (list.contains(question.getAuction())) {
+		
+		if (list.contains(question.getAuction())) 
 			throw new IllegalArgumentException("Question action name must not be empty!");
-		}
-		if (list.contains(question.getUser())) {
+		
+		if (list.contains(question.getUser())) 
 			throw new IllegalArgumentException("Question username must not be empty!");
-		}
-		if (list.contains(question.getText())) {
+		
+		if (list.contains(question.getText())) 
 			throw new IllegalArgumentException("Question text must not be empty!");
-		}
-		if (list.contains(question.getAnswer())) {
-			throw new NotAuthorizedException("You can't create a question with an answer already!");
-		}
+		
+		if(!list.contains(question.getAnswer()) && flag == 0)
+			throw new NotAuthorizedException("You cant create a question with an answer already!");
+
 		getAuction(question.getAuction());
 		resourceContext.getResource(UserResource.class).getUser(question.getUser());
 	}
