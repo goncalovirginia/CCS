@@ -109,7 +109,7 @@ public class CosmosDBLayer {
 	}
 	
 	public CosmosPagedIterable<AuctionDAO> getAuctionsEndingSoon() {
-		return auctions.queryItems("SELECT * FROM auctions WHERE auctions.status=\"open\" AND DATEDIFF(CURDATE(), auctions.endTime)<=2", new CosmosQueryRequestOptions(), AuctionDAO.class);
+		return auctions.queryItems("SELECT * FROM auctions WHERE auctions.status=\"open\" AND DATETIMEDIFF(\"day\", GETCURRENTDATETIME(), auctions.endTime)<=2 AND DATETIMEDIFF(\"day\", GETCURRENTDATETIME(), auctions.endTime)>=0", new CosmosQueryRequestOptions(), AuctionDAO.class);
 	}
 	
 	public CosmosPagedIterable<AuctionDAO> getAuctionsByOwner(String id) {
