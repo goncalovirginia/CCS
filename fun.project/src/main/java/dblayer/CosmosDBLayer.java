@@ -55,7 +55,7 @@ public class CosmosDBLayer {
 	}
 	
 	public CosmosPagedIterable<AuctionDAO> getAuctionsToClose() {
-		return auctions.queryItems("SELECT * FROM auctions WHERE auctions.endTime < GETCURRENTDATETIME()", new CosmosQueryRequestOptions(), AuctionDAO.class);
+		return auctions.queryItems("SELECT * FROM auctions WHERE auctions.status=\"open\" AND auctions.endTime < GETCURRENTDATETIME()", new CosmosQueryRequestOptions(), AuctionDAO.class);
 	}
 	
 	public BidDAO getTopBid(String auctionTitle) {

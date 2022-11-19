@@ -1,6 +1,7 @@
 package scc.srv;
 
 import jakarta.ws.rs.core.Application;
+import scc.utils.GenericExceptionMapper;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -16,6 +17,7 @@ public class MainApplication extends Application {
 		resources.add(UserResource.class);
 		resources.add(AuctionResource.class);
 		resources.add(AccessControl.class);
+		resources.add(GenericExceptionMapper.class);
 		singletons.add(new MediaResource());
 		singletons.add(new UserResource());
 		singletons.add(new AuctionResource());
