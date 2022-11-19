@@ -85,9 +85,9 @@ public class CosmosDBLayer {
 	}
 	
 	public CosmosItemResponse<Object> delUserById(String id) {
-		questions.queryItems("UPDATE questions SET questions.user=\"Deleted User\" WHERE questions.user=\"" + getUserById(id).getName() + "\"", new CosmosQueryRequestOptions(), QuestionDAO.class);
-		bids.queryItems("UPDATE bids SET bids.user=\"Deleted User\" WHERE bids.user=\"" + getUserById(id).getName() + "\"", new CosmosQueryRequestOptions(), BidDAO.class);
-		auctions.queryItems("UPDATE auctions SET auctions.owner=\"Deleted User\" WHERE auctions.owner=\"" + getUserById(id).getName() + "\"", new CosmosQueryRequestOptions(), AuctionDAO.class);
+		questions.queryItems("UPDATE questions SET questions.user=\"Deleted.User\" WHERE questions.user=\"" + id + "\"", new CosmosQueryRequestOptions(), QuestionDAO.class);
+		bids.queryItems("UPDATE bids SET bids.user=\"Deleted.User\" WHERE bids.user=\"" + id + "\"", new CosmosQueryRequestOptions(), BidDAO.class);
+		auctions.queryItems("UPDATE auctions SET auctions.owner=\"Deleted.User\" WHERE auctions.owner=\"" + id + "\"", new CosmosQueryRequestOptions(), AuctionDAO.class);
 		return users.deleteItem(id, new PartitionKey(id), new CosmosItemRequestOptions());
 	}
 	
