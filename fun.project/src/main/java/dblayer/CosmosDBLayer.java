@@ -6,6 +6,7 @@ import com.azure.cosmos.models.CosmosQueryRequestOptions;
 import com.azure.cosmos.util.CosmosPagedIterable;
 
 import data.Auction;
+import data.AuctionDAO;
 import rediscache.RedisLayer;
 import utils.AzureProperties;
 
@@ -52,15 +53,14 @@ public class CosmosDBLayer {
 		}
 	}
 	
-	public CosmosPagedIterable<Auction> getAuctionsToClose() {
-		return auctions.queryItems("SELECT auctions.id FROM auctions WHERE auctions.endTime < GETCURRENTDATETIME()", new CosmosQueryRequestOptions(), Auction.class);
+	public CosmosPagedIterable<AuctionDAO> getAuctionsToClose() {
+		return auctions.queryItems("SELECT * FROM auctions WHERE auctions.endTime < GETCURRENTDATETIME()", new CosmosQueryRequestOptions(), AuctionDAO.class);
 	}
 
-	public void closeAuction(Auction auction) {
+	public void closeAuction(AuctionDAO auction) {
 		auction.setStatus("closed");
-		auctions.deleteItem(auction, new CosmosItemRequestOptions());
 		auctions.createItem(auction);
-		RedisLayer.putAuction(auction);
+		RedisLayer.putAuction(new Auction(auction));
 	}
 	
 }

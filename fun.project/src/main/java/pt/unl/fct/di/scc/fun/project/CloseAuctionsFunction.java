@@ -5,6 +5,7 @@ import com.microsoft.azure.functions.annotation.FunctionName;
 import com.microsoft.azure.functions.annotation.TimerTrigger;
 
 import data.Auction;
+import data.AuctionDAO;
 import dblayer.CosmosDBLayer;
 
 /**
@@ -19,7 +20,7 @@ public class CloseAuctionsFunction {
             final ExecutionContext context) {
     	        CosmosDBLayer db = CosmosDBLayer.getInstance();
 		
-    	        for (Auction auction : db.getAuctionsToClose()) {
+    	        for (AuctionDAO auction : db.getAuctionsToClose()) {
 					db.closeAuction(auction);
 	            }
             }
