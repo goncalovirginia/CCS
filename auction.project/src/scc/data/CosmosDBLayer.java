@@ -43,6 +43,7 @@ public class CosmosDBLayer {
 	private CosmosContainer auctions;
 	private CosmosContainer bids;
 	private CosmosContainer questions;
+	private CosmosContainer sessions;
 	
 	public CosmosDBLayer(CosmosClient client) {
 		this.client = client;
@@ -56,11 +57,43 @@ public class CosmosDBLayer {
 			auctions = db.getContainer("auctions");
 			bids = db.getContainer("bids");
 			questions = db.getContainer("questions");
+			sessions = db.getContainer("sessions");
 		}
 	}
 	
 	public void close() {
 		client.close();
+	}
+
+	public CosmosItemResponse<SessionDAO> putSession(SessionDAO session) {
+		return sessions.createItem(session);
+	}
+	
+	public SessionDAO getSession(String id) {
+		try {
+			return sessions.queryItems("SELECT * FROM sessions WHERE sessions.id=\"" + id + "\"", new CosmosQueryRequestOptions(), SessionDAO.class).stream().toList().get(0);
+		}
+		catch (Exception e) {
+			throw new NotFoundException();
+		}
+	}
+
+	public CosmosPagedIterable<SessionDAO> getAllSessions() {
+		try {
+			return sessions.queryItems("SELECT * FROM sessions", new CosmosQueryRequestOptions(), SessionDAO.class);
+		}
+		catch (Exception e) {
+			throw new NotFoundException();
+		}
+	}
+
+	public CosmosItemResponse<Object> delSession(SessionDAO session) {
+		CosmosPagedIterable<SessionDAO> allSessions = getAllSessions();
+		for (SessionDAO sessionDAO : allSessions) {
+			if(sessionDAO.getUser() == session.getUser())
+				return sessions.deleteItem(sessionDAO, new CosmosItemRequestOptions());
+		}
+		return null;
 	}
 	
 	public CosmosItemResponse<UserDAO> putUser(UserDAO user) {

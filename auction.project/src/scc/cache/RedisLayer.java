@@ -22,6 +22,15 @@ public class RedisLayer extends RedisCache {
 	public static Session getSession(String uid) {
 		return (getCachePool() != null ? readFromHashmap(USER_SESSIONS, uid, Session.class) : null);
 	}
+
+	public static boolean delSession(Session session) {
+		boolean flag = false;
+		if (getCachePool() != null){
+			deleteFromHashmapByValue(USER_SESSIONS, session.getUser());
+			flag = true;
+		}
+		return flag;
+	}
 	
 	public static Auction putAuction(Auction auction) {
 		return (getCachePool() != null ? writeToHashmap(AUCTIONS, auction.getTitle(), auction) : auction);

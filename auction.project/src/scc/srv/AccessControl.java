@@ -3,6 +3,7 @@ package scc.srv;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.NotAuthorizedException;
 import jakarta.ws.rs.POST;
+import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.Cookie;
 import jakarta.ws.rs.core.MediaType;
@@ -10,6 +11,7 @@ import scc.cache.RedisLayer;
 import scc.data.CosmosDBLayer;
 import scc.data.Login;
 import scc.data.Session;
+import scc.data.SessionDAO;
 import scc.utils.Hash;
 
 import javax.ws.rs.core.NewCookie;
@@ -22,7 +24,7 @@ public class AccessControl {
 	@POST
 	@Path("/auth")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response auth(Login login) {
+	public Response authLogin(Login login) {
 		if (login == null || login.userId() == null || login.pwd() == null ||
 				!RedisLayer.getUser(login.userId()).getPwd().equals(Hash.of(login.pwd())) ||
 				!CosmosDBLayer.getInstance().getUserById(login.userId()).getPwd().equals(Hash.of(login.pwd()))) {
@@ -31,8 +33,33 @@ public class AccessControl {
 		
 		String uuid = UUID.randomUUID().toString();
 		NewCookie cookie = new NewCookie("scc:session", uuid, "/", null, 1, "sessionid", 3600, false);
-		RedisLayer.putSession(new Session(uuid, login.userId()));
+		Session s = new Session(uuid, login.userId());
+		boolean check = RedisLayer.putSession(s);
+		if(!check)
+			CosmosDBLayer.getInstance().putSession(new SessionDAO(s));
+
 		return Response.ok().cookie(cookie).build();
+	}
+
+	@DELETE
+	@Path("/auth")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response authLogout(Login login) {
+		if (login == null || login.userId() == null || login.pwd() == null ||
+		!RedisLayer.getUser(login.userId()).getPwd().equals(Hash.of(login.pwd())) ||
+		!CosmosDBLayer.getInstance().getUserById(login.userId()).getPwd().equals(Hash.of(login.pwd()))) {
+			throw new NotAuthorizedException("Incorrect login credentials");
+		}
+
+		Session s = new Session(null, login.userId());
+
+		boolean check = RedisLayer.delSession(s);
+
+		if(!check)
+			CosmosDBLayer.getInstance().delSession(new SessionDAO(s));
+
+		return Response.ok().build();
+
 	}
 	
 	public static Session checkSessionCookie(Cookie session, String id) throws NotAuthorizedException {

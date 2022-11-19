@@ -97,7 +97,7 @@ public class AuctionResource extends AccessControl {
 	}
 	
 	
-	@POST
+	@PUT
 	@Path("/{id}/answer")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
