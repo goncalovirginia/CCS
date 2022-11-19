@@ -7,6 +7,7 @@ import com.azure.cosmos.util.CosmosPagedIterable;
 
 import data.Auction;
 import data.AuctionDAO;
+import data.BidDAO;
 import rediscache.RedisLayer;
 import utils.AzureProperties;
 
@@ -56,10 +57,37 @@ public class CosmosDBLayer {
 	public CosmosPagedIterable<AuctionDAO> getAuctionsToClose() {
 		return auctions.queryItems("SELECT * FROM auctions WHERE auctions.endTime < GETCURRENTDATETIME()", new CosmosQueryRequestOptions(), AuctionDAO.class);
 	}
+	
+	public BidDAO getTopBid(String auctionTitle) {
+		CosmosPagedIterable<BidDAO> bids = auctions.queryItems("SELECT * FROM bids WHERE bids.auction=\"" + auctionTitle + "\"", new CosmosQueryRequestOptions(), BidDAO.class);
+		
+		int highestAmount = 0;
+		BidDAO highestBid = null;
+		
+		for (BidDAO bid : bids) {
+			if (bid.getAmount() > highestAmount) {
+				highestBid = bid;
+			}
+		}
+		
+		return highestBid;
+	}
 
 	public void closeAuction(AuctionDAO auction) {
-		auction.setStatus("closed");
 		auctions.deleteItem(auction, new CosmosItemRequestOptions());
+		BidDAO topBid = getTopBid(auction.getTitle());
+		
+		auction.setStatus("closed");
+		
+		if (topBid == null) {
+			auction.setWinningBid(0);
+			auction.setWinner(null);
+		}
+		else {
+			auction.setWinningBid(topBid.getAmount());
+			auction.setWinner(topBid.getUser());
+		}
+		
 		auctions.createItem(auction);
 		RedisLayer.putAuction(new Auction(auction));
 	}

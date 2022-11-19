@@ -85,4 +85,13 @@ public class AuctionDAO {
 	public String getId() {
 		return id;
 	}
+	
+	public void setWinningBid(int amount) {
+		this.winningBid = amount;
+	}
+	
+	public void setWinner(String winner) {
+		this.winner = winner;
+	}
+	
 }
