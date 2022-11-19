@@ -92,7 +92,7 @@ public class AuctionResource extends AccessControl {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Question postQuestion(@CookieParam("scc:session") Cookie session, @PathParam("id") String id, Question question) {
 		checkSessionCookie(session, question.getUser());
-		validateQuestion(question, 0);
+		validateQuestion(question, true);
 		return new Question(db.putQuestion(new QuestionDAO(question)).getItem());
 	}
 	
@@ -102,11 +102,11 @@ public class AuctionResource extends AccessControl {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Question putAnswer(@CookieParam("scc:session") Cookie session, @PathParam("id") String id, Question question) {
 		Session s = checkSessionCookie(session, question.getUser());
-		validateQuestion(question, 1);
+		validateQuestion(question, false);
 		
 		Auction auction = getAuction(question.getAuction());
 		
-		if (!s.getUser().equals(auction.getOwner()) && question.getAnswer() != "" && question.getAnswer() != null) {
+		if (!s.getUser().equals(auction.getOwner()) && question.getAnswer() != null && !question.getAnswer().equals("")) {
 			throw new NotAuthorizedException("Only the owner of the auction can answer the question!");
 		}
 		
@@ -165,7 +165,7 @@ public class AuctionResource extends AccessControl {
 		getAuction(bid.getId());
 	}
 	
-	private void validateQuestion(Question question, int flag) {
+	private void validateQuestion(Question question, boolean isQuestion) {
 		List<String> list = Arrays.asList("", null);
 		
 		if (list.contains(question.getId())) 
@@ -180,7 +180,7 @@ public class AuctionResource extends AccessControl {
 		if (list.contains(question.getText())) 
 			throw new IllegalArgumentException("Question text must not be empty!");
 		
-		if(!list.contains(question.getAnswer()) && flag == 0)
+		if(!list.contains(question.getAnswer()) && isQuestion)
 			throw new NotAuthorizedException("You cant create a question with an answer already!");
 
 		getAuction(question.getAuction());
