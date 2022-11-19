@@ -3,39 +3,37 @@ package scc.srv;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.container.ResourceContext;
 import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.Cookie;
 import jakarta.ws.rs.core.MediaType;
 import scc.cache.RedisLayer;
 import scc.data.*;
-import jakarta.ws.rs.core.Cookie;
 
 import java.util.Arrays;
 import java.util.List;
 
 @Path("/auction")
-public class AuctionResource extends AccessControl{
+public class AuctionResource extends AccessControl {
 	
 	private final CosmosDBLayer db = CosmosDBLayer.getInstance();
 	
 	@Context
 	ResourceContext resourceContext;
 	
-	@PUT
 	@POST
 	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Auction createAuction(@CookieParam("scc:session") Cookie session, Auction auction) {
 		try {
-			validateAuction(auction);
 			checkSessionCookie(session, auction.getOwner());
-			resourceContext.getResource(UserResource.class).getUser(auction.getOwner());
-			resourceContext.getResource(MediaResource.class).fileExists(auction.getPhotoId());
-			Auction dbAuction = new Auction(db.putAuction(new AuctionDAO(auction)).getItem());
-			return RedisLayer.putAuction(dbAuction);
-		} catch(WebApplicationException e) {
+			validateAuction(auction);
+			return RedisLayer.putAuction(new Auction(db.putAuction(new AuctionDAO(auction)).getItem()));
+		}
+		catch (WebApplicationException e) {
 			throw e;
-		} catch(Exception e) {
-			throw new InternalServerErrorException( e);
+		}
+		catch (Exception e) {
+			throw new InternalServerErrorException(e);
 		}
 	}
 	
@@ -66,9 +64,8 @@ public class AuctionResource extends AccessControl{
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Bid bid(@CookieParam("scc:session") Cookie session, @PathParam("id") String id, Bid bid) {
-		validateBid(bid);
 		checkSessionCookie(session, bid.getUser());
-		getAuction(id);
+		validateBid(bid);
 		resourceContext.getResource(UserResource.class).getUser(bid.getUser());
 		return new Bid(db.putBid(new BidDAO(bid)).getItem());
 	}
@@ -86,35 +83,32 @@ public class AuctionResource extends AccessControl{
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Question postQuestion(@CookieParam("scc:session") Cookie session, @PathParam("id") String id, Question question) {
-		validateQuestion(question);
-		if(question.getAnswer() != null || question.getAnswer() != ""){
-			throw new NotAuthorizedException("You cant create a question with an answer already");
-		}
 		checkSessionCookie(session, question.getUser());
-		getAuction(id);
-		resourceContext.getResource(UserResource.class).getUser(question.getUser());
+		validateQuestion(question);
 		return new Question(db.putQuestion(new QuestionDAO(question)).getItem());
 	}
-
-
-	@PUT
-	@Path("/{id}/question")
+	
+	
+	@POST
+	@Path("/{id}/answer")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Question putQuestion(@CookieParam("scc:session") Cookie session, @PathParam("id") String id, Question question) {
-		validateQuestion(question);
+	public Question postAnswer(@CookieParam("scc:session") Cookie session, @PathParam("id") String id, Question question) {
 		checkSessionCookie(session, question.getUser());
-		getAuction(id);
+		validateQuestion(question);
+		
 		Session s = RedisLayer.getSession(session.getValue());
-		if(s == null){
+		
+		if (s == null) {
 			s = new Session(CosmosDBLayer.getInstance().getSession(session.getValue()));
 		}
+		
 		AuctionDAO auction = db.getAuctionsByOwnerAndName(s.getUser(), question.getAuction());
-	
-		if(s.getUser() != new Auction(auction).getOwner() && question.getAnswer() != ""){
+		
+		if (s.getUser() != new Auction(auction).getOwner() && question.getAnswer() != "") {
 			throw new NotAuthorizedException("Only the owner of the auction can answer the question!");
 		}
-
+		
 		resourceContext.getResource(UserResource.class).getUser(question.getUser());
 		return new Question(db.putQuestion(new QuestionDAO(question)).getItem());
 	}
@@ -126,81 +120,71 @@ public class AuctionResource extends AccessControl{
 		getAuction(id);
 		return db.getQuestions(id).stream().map(Question::new).toList();
 	}
-
-
-	public void validateAuction(Auction auction){
-
-		List<String> list = Arrays.asList(new String[]{"", null, "closed", "open"});
-
-		if(list.contains(auction.getId())){
+	
+	
+	private void validateAuction(Auction auction) {
+		List<String> list = Arrays.asList("", null, "closed", "open");
+		
+		if (list.contains(auction.getId())) {
 			throw new IllegalArgumentException("Auction id must not be empty!");
 		}
-
-		if(list.contains(auction.getTitle())){
+		if (list.contains(auction.getTitle())) {
 			throw new IllegalArgumentException("Auction title must not be empty!");
 		}
-
-		if(list.contains(auction.getPhotoId())){
+		if (list.contains(auction.getPhotoId())) {
 			throw new IllegalArgumentException("Auction photo must not be empty!");
 		}
-
-		if(list.contains(auction.getEndTime())){
+		if (list.contains(auction.getEndTime())) {
 			throw new IllegalArgumentException("Auction end time must not be empty!");
 		}
-
-		if(!list.contains(auction.getStatus()) && !list.contains(auction.getStatus())){
+		if (!list.contains(auction.getStatus()) && !list.contains(auction.getStatus())) {
 			throw new IllegalArgumentException("Auction status must be 'open' or 'closed'");
 		}
-		
-		if(auction.getMinPrice() < 1){
+		if (auction.getMinPrice() < 1) {
 			throw new IllegalArgumentException("Auction minimum price must not be lower than 1!");
 		}
-
+		resourceContext.getResource(UserResource.class).getUser(auction.getOwner());
+		resourceContext.getResource(MediaResource.class).fileExists(auction.getPhotoId());
 	}
 	
-	public void validateBid(Bid bid){
-
+	private void validateBid(Bid bid) {
 		List<String> list = Arrays.asList("", null);
-
-		if(list.contains(bid.getId())){
+		
+		if (list.contains(bid.getId())) {
 			throw new IllegalArgumentException("Bid id must not be empty!");
 		}
-
-		if(list.contains(bid.getAuction())){
+		if (list.contains(bid.getAuction())) {
 			throw new IllegalArgumentException("Bid action name must not be empty!");
 		}
-
-		if(list.contains(bid.getUser())){
+		if (list.contains(bid.getUser())) {
 			throw new IllegalArgumentException("Bid username must not be empty!");
 		}
-
-		if(bid.getAmount() < 1){
+		if (bid.getAmount() < 1) {
 			throw new IllegalArgumentException("Bid amount must not be lower than 1!");
 		}
-
+		getAuction(bid.getId());
 	}
-
 	
-	public void validateQuestion(Question question){
-
-		List<String> list = Arrays.asList(new String[]{"", null});
-
-		if(list.contains(question.getId())){
+	private void validateQuestion(Question question) {
+		List<String> list = Arrays.asList("", null);
+		
+		if (list.contains(question.getId())) {
 			throw new IllegalArgumentException("Question id must not be empty!");
 		}
-
-		if(list.contains(question.getAuction())){
+		if (list.contains(question.getAuction())) {
 			throw new IllegalArgumentException("Question action name must not be empty!");
 		}
-
-		if(list.contains(question.getUser())){
+		if (list.contains(question.getUser())) {
 			throw new IllegalArgumentException("Question username must not be empty!");
 		}
-
-		if(list.contains(question.getText())){
+		if (list.contains(question.getText())) {
 			throw new IllegalArgumentException("Question text must not be empty!");
 		}
-
+		if (list.contains(question.getAnswer())) {
+			throw new NotAuthorizedException("You can't create a question with an answer already!");
+		}
+		getAuction(question.getAuction());
+		resourceContext.getResource(UserResource.class).getUser(question.getUser());
 	}
 	
 }

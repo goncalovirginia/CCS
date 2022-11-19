@@ -1,5 +1,9 @@
 package scc.mgt;
 
+import com.microsoft.azure.management.Azure;
+import com.microsoft.azure.management.search.QueryKey;
+import com.microsoft.azure.management.search.SearchService;
+
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
@@ -7,18 +11,13 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import com.microsoft.azure.management.Azure;
-import com.microsoft.azure.management.search.QueryKey;
-import com.microsoft.azure.management.search.SearchService;
-
 /**
  * This class dumps the information for a given search index in the format that
  * will be used by the Search program.
  * It also creates a .sh file to set the appropriate properties.
  */
-public class SearchDumpProperties
-{
-	private static void appendInfo( StringBuffer cmd, String name, String rgName, String propName, String value) {
+public class SearchDumpProperties {
+	private static void appendInfo(StringBuffer cmd, String name, String rgName, String propName, String value) {
 		cmd.append("az functionapp config appsettings set --name ");
 		cmd.append(name);
 		cmd.append(" --resource-group ");
@@ -33,7 +32,7 @@ public class SearchDumpProperties
 	
 	public static void main(String[] args) {
 		if (args.length == 0) {
-			System.out.println( "java scc.mgt.SearchDumpProperties name");
+			System.out.println("java scc.mgt.SearchDumpProperties name");
 			return;
 		}
 		String searchService = args[0];
@@ -76,20 +75,20 @@ public class SearchDumpProperties
 					
 					StringBuffer cmd = new StringBuffer();
 					if (functionName != null) {
-						appendInfo( cmd, functionName, rgName, "SearchServiceName", searchService);
-						appendInfo( cmd, functionName, rgName, "SearchServiceAdminKey", srv.getAdminKeys().primaryKey());
-						appendInfo( cmd, functionName, rgName, "SearchServiceQueryKey", lst.get(0).key());
-						appendInfo( cmd, functionName, rgName, "SearchServiceUrl", "https://" + searchService + ".search.windows.net");
-						appendInfo( cmd, functionName, rgName, "IndexName", "cosmosdb-index");
-						appendInfo( cmd, functionName, rgName, "ApiVersion", "2020-06-30");
+						appendInfo(cmd, functionName, rgName, "SearchServiceName", searchService);
+						appendInfo(cmd, functionName, rgName, "SearchServiceAdminKey", srv.getAdminKeys().primaryKey());
+						appendInfo(cmd, functionName, rgName, "SearchServiceQueryKey", lst.get(0).key());
+						appendInfo(cmd, functionName, rgName, "SearchServiceUrl", "https://" + searchService + ".search.windows.net");
+						appendInfo(cmd, functionName, rgName, "IndexName", "cosmosdb-index");
+						appendInfo(cmd, functionName, rgName, "ApiVersion", "2020-06-30");
 					}
 					if (appName != null) {
-						appendInfo( cmd, appName, rgName, "SearchServiceName", searchService);
-						appendInfo( cmd, appName, rgName, "SearchServiceAdminKey", srv.getAdminKeys().primaryKey());
-						appendInfo( cmd, appName, rgName, "SearchServiceQueryKey", lst.get(0).key());
-						appendInfo( cmd, appName, rgName, "SearchServiceUrl", "https://" + searchService + ".search.windows.net");
-						appendInfo( cmd, appName, rgName, "IndexName", "cosmosdb-index");
-						appendInfo( cmd, appName, rgName, "ApiVersion", "2020-06-30");
+						appendInfo(cmd, appName, rgName, "SearchServiceName", searchService);
+						appendInfo(cmd, appName, rgName, "SearchServiceAdminKey", srv.getAdminKeys().primaryKey());
+						appendInfo(cmd, appName, rgName, "SearchServiceQueryKey", lst.get(0).key());
+						appendInfo(cmd, appName, rgName, "SearchServiceUrl", "https://" + searchService + ".search.windows.net");
+						appendInfo(cmd, appName, rgName, "IndexName", "cosmosdb-index");
+						appendInfo(cmd, appName, rgName, "ApiVersion", "2020-06-30");
 					}
 					synchronized (AzureManagement.class) {
 						Files.deleteIfExists(Paths.get(settingsFilename));
@@ -97,7 +96,8 @@ public class SearchDumpProperties
 					}
 				}
 			}
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			e.printStackTrace();
 		}
 		System.exit(0);

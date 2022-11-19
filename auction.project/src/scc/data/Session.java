@@ -5,21 +5,22 @@ package scc.data;
  */
 
 public class Session {
-
-    private String id;
-    private String user;
-
-    public Session(){};
-
-    public Session(String id, String user) {
-        this.id = id;
-        this.user = user;
+	
+	private String id;
+	private String user;
+	
+	public Session() {
 	}
-
-    public Session(SessionDAO u) {
+	
+	public Session(String id, String user) {
+		this.id = id;
+		this.user = user;
+	}
+	
+	public Session(SessionDAO u) {
 		this(u.getId(), u.getUser());
 	}
-
+	
 	public String getid() {
 		return id;
 	}
@@ -35,11 +36,11 @@ public class Session {
 	public void setUser(String user) {
 		this.user = user;
 	}
-
-    @Override
+	
+	@Override
 	public String toString() {
 		return "Session [id=" + id + ", user=" + user + "]";
 	}
 	
-
+	
 }

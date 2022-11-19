@@ -43,11 +43,11 @@ public class Question {
 	public String getId() {
 		return id;
 	}
-
-	public String getAnswer(){
+	
+	public String getAnswer() {
 		return answer;
 	}
-
+	
 	@Override
 	public String toString() {
 		return "Question [id=" + id + ", auction=" + auction + ", user=" + user + ", text=" + text + ", answer=" + answer + "]";

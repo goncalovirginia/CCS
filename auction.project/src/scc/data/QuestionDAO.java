@@ -16,7 +16,7 @@ public class QuestionDAO {
 	
 	public QuestionDAO() {
 	}
-
+	
 	public QuestionDAO(String id, String auction, String user, String text, String answer) {
 		this();
 		this.id = id;
@@ -49,8 +49,8 @@ public class QuestionDAO {
 	public String getText() {
 		return text;
 	}
-
-	public String getAnswer(){
+	
+	public String getAnswer() {
 		return answer;
 	}
 	

@@ -1,10 +1,5 @@
 package scc.utils;
 
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.Map;
-import java.util.Properties;
-
 import com.azure.core.credential.AzureKeyCredential;
 import com.azure.search.documents.SearchClient;
 import com.azure.search.documents.SearchClientBuilder;
@@ -13,6 +8,11 @@ import com.azure.search.documents.models.SearchMode;
 import com.azure.search.documents.models.SearchOptions;
 import com.azure.search.documents.util.SearchPagedIterable;
 import com.azure.search.documents.util.SearchPagedResponse;
+
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * Based on the code from:
@@ -25,13 +25,13 @@ public class SearchExample {
 	public static final String PROP_SERVICE_URL = "SearchServiceUrl";
 	public static final String PROP_INDEX_NAME = "IndexName";
 	public static final String PROP_QUERY_KEY = "SearchServiceQueryKey";
-
+	
 	private static Properties loadProperties(String propsFile) throws IOException {
 		Properties props = new Properties();
 		props.load(new FileReader(propsFile));
 		return props;
 	}
-
+	
 	public static void main(String[] args) {
 		String propFile = SEARCH_PROP_FILE;
 		if (args.length > 0) {
@@ -56,10 +56,10 @@ public class SearchExample {
 			// https://docs.microsoft.com/en-us/rest/api/searchservice/search-documents
 			String queryText = "laboriosam";
 			SearchOptions options = new SearchOptions().setIncludeTotalCount(true).setTop(5);
-
+			
 			SearchPagedIterable searchPagedIterable = searchClient.search(queryText, options, null);
 			System.out.println("Number of results : " + searchPagedIterable.getTotalCount());
-
+			
 			for (SearchPagedResponse resultResponse : searchPagedIterable.iterableByPage()) {
 				resultResponse.getValue().forEach(searchResult -> {
 					for (Map.Entry<String, Object> res : searchResult.getDocument(SearchDocument.class).entrySet()) {
@@ -68,7 +68,7 @@ public class SearchExample {
 					System.out.println();
 				});
 			}
-
+			
 			System.out.println();
 			System.out.println("=============== Second query ======================");
 			queryText = "laboriosam";
@@ -77,10 +77,10 @@ public class SearchExample {
 					.setSelect("id", "owner", "title", "description")
 					.setSearchFields("title")
 					.setTop(5);
-
+			
 			searchPagedIterable = searchClient.search(queryText, options, null);
 			System.out.println("Number of results : " + searchPagedIterable.getTotalCount());
-
+			
 			for (SearchPagedResponse resultResponse : searchPagedIterable.iterableByPage()) {
 				resultResponse.getValue().forEach(searchResult -> {
 					for (Map.Entry<String, Object> res : searchResult.getDocument(SearchDocument.class).entrySet()) {
@@ -89,17 +89,17 @@ public class SearchExample {
 					System.out.println();
 				});
 			}
-
+			
 			System.out.println();
 			System.out.println("=============== Third query ======================");
 			queryText = "Gardner";
 			options = new SearchOptions().setIncludeTotalCount(true)
 					.setSelect("id", "owner", "title", "description").setSearchFields("title", "description").setSearchMode(SearchMode.ALL)
 					.setTop(5);
-
+			
 			searchPagedIterable = searchClient.search(queryText, options, null);
 			System.out.println("Number of results : " + searchPagedIterable.getTotalCount());
-
+			
 			for (SearchPagedResponse resultResponse : searchPagedIterable.iterableByPage()) {
 				resultResponse.getValue().forEach(searchResult -> {
 					for (Map.Entry<String, Object> res : searchResult.getDocument(SearchDocument.class).entrySet()) {
@@ -108,10 +108,11 @@ public class SearchExample {
 					System.out.println();
 				});
 			}
-
-		} catch (Exception e) {
+			
+		}
+		catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-
+	
 }

@@ -5,13 +5,13 @@ package scc.data;
  */
 
 public class SessionDAO {
-    
-    private String _rid;
+	
+	private String _rid;
 	private String _ts;
-    private String id;
+	private String id;
 	private String user;
-
-    public SessionDAO() {
+	
+	public SessionDAO() {
 	}
 	
 	public SessionDAO(Session u) {
@@ -47,13 +47,13 @@ public class SessionDAO {
 	public void setId(String id) {
 		this.id = id;
 	}
-
-    public String getUser() {
+	
+	public String getUser() {
 		return user;
 	}
 	
 	public void setUser(String user) {
 		this.user = user;
 	}
-
+	
 }

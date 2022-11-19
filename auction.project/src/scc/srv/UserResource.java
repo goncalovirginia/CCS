@@ -5,7 +5,9 @@ import jakarta.ws.rs.container.ResourceContext;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import scc.cache.RedisLayer;
-import scc.data.*;
+import scc.data.CosmosDBLayer;
+import scc.data.User;
+import scc.data.UserDAO;
 
 /**
  * Resource for managing user database.
@@ -48,6 +50,10 @@ public class UserResource {
 		}
 		
 		return new User((UserDAO) dbUser);
+	}
+	
+	private void validateUser(User user) {
+	
 	}
 	
 }

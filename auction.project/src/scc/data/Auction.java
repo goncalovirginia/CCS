@@ -75,10 +75,10 @@ public class Auction {
 	public String getId() {
 		return id;
 	}
-
+	
 	@Override
 	public String toString() {
-		return "Auction [id=" + id + ", title=" + title + ", description=" + description + ", photoId=" + photoId + 
-		", owner=" + owner + ", endTime=" + endTime + ", status=" + status + ", minPrice=" + minPrice + "]";
+		return "Auction [id=" + id + ", title=" + title + ", description=" + description + ", photoId=" + photoId +
+				", owner=" + owner + ", endTime=" + endTime + ", status=" + status + ", minPrice=" + minPrice + "]";
 	}
 }

@@ -13,10 +13,10 @@ public class CognitiveSearchClient {
 	private static final String IndexName = System.getenv(AzureProperties.IndexName);
 	
 	private static final SearchClient searchClient = new SearchClientBuilder()
-					.credential(new AzureKeyCredential(SearchServiceQueryKey))
-					.endpoint(SearchServiceUrl)
-					.indexName(IndexName)
-					.buildClient();
+			.credential(new AzureKeyCredential(SearchServiceQueryKey))
+			.endpoint(SearchServiceUrl)
+			.indexName(IndexName)
+			.buildClient();
 	
 	public SearchPagedIterable queryAuctionDescription(String description) {
 		SearchOptions options = new SearchOptions()
