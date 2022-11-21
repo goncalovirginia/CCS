@@ -1,65 +1,102 @@
 ![](https://www.pm2alliance.eu/wp-content/uploads/2019/10/fct-1024x212.jpg)
 
 # SCC<br>Auctions Project</span><br>
-### Repositório: [https://github.com/goncalovirginia/CCS](https://github.com/goncalovirginia/CCS)<br>
+### Repository: [https://github.com/goncalovirginia/CCS](https://github.com/goncalovirginia/CCS)<br>
 ### André Correia - 64783 - aas.correia@campus.fct.unl.pt<br>
 ### Gonçalo Virgínia - 56773 - g.virginia@campus.fct.unl.pt<br>
 ### Rodrigo Fontinha - 64813 - r.fontinha@campus.fct.unl.pt<br>
 
-<br>
-
-## 1. Introdução
-
-Este projeto surge no âmbito da unidade curricular Sistemas de Computação em Cloud e tem como objetivo o desenvolvimento de uma aplicação de leilões à semelhança do EBay, focando no design, na implementação do backend e nos respetivos scripts de teste.
-
-A implementação do projeto é possível através dos serviços e recursos Azure, que fornecem tanto uma plataforma para deployment da aplicação como funcionalidades que tornam todo o processo de desenvolvimento mais fácil e eficaz.
-
 <div style="page-break-after: always"></div>
+
+## 1. Introduction
+
+This project arises from the Cloud Computing Systems curricular unit and aims to develop an auction application similar to EBay, focusing on the design, implementation of the backend and the respective test scrips.
+
+Using Azure, the project is provisioned with both a platform for application deployment in the Azure cloud and features that support the project implementation process and allow for more efficient programming.
 
 ## 2. Design
 
-O projeto foi separado em duas componentes - **auction.project** e **fun.project** - que, por si, são constituídas por diferentes módulos.
+The project was separated into two components as Maven projects - **auction.project** and **fun.project** - which are composed of different modules.
 
-De entre os vários serviços globalmente disponíveis pela Azure, este projeto visa tirar partido de:
+Among the various globally available services that Azure provides, this project aims to take advantage of the following:
 
-* **Storage Account** para gerir quaisquer ficheiros media publicados à aplicação, nomeadamente imagens;
-* **CosmosDB** como sistema de armazenamento e gestão de dados;
-* **Redis** como sistema de caching para melhorar a performance do projeto em tempo de resposta e redução dos esforço de processamento de dados;
-* **Azure Functions** para executar excertos de código serverless;
-* **Azure Cognitive Search** para reduzir a complexidade da importação de dados para consumo imediato através de índices.
+* **Storage Account** to manage any media files published to the application, namely images;
+* **CosmosDB** as the database system to store and manage data;
+* **Azure Functions** to run snippets of serverless code;
+* **Azure Cognitive Search** to reduce the complexity of importing data for immediate consumption via indexes.
+
+Additionally, **Redis** was also integrated in the project to increase its overall performance when in comes to response time, while also reducing the amount of processing done by the application and database service.
 
 ### 2.1 Auctions App
 
-A componente de aplicação de leilões inclui o backend correspondente ao projeto e os scripts de teste em formato *yml*.
+The auction application component - **auction.project** - includes the backend that corresponds to the project and the test scripts in the format of *yml* files.
 
-O backend foi dividido por cinco módulos diferentes que interagem entre si para permitir a utilização dos serviços oferecidos pela aplicação. Estes podem ser representados como na tabela seguinte:
+The backend was divided into five different modules that interact with one another to allow the use of the services offered by the application. These can be represented as in the following table:
 
-| Módulo | Função |
+| Module | Role |
 | --- | --- |
-| **cache** | Camada de comunicação com o Redis como sistema de caching |
-| **data** | Estruturas de dados e camada de comunicação com a CosmosDB |
-| **mgt** | Gestão automatizada de recursos Azure e chaves de acesso correspondentes |
-| **srv** | Definição de endpoints de interação com os serviços da aplicação |
-| **utils** | Armazenamento e disponibilidade de propriedades auxiliares à aplicação |
+| **cache** | Communication layer with Redis as the caching system |
+| **data** | Data structures and communication layer with CosmosDB as the database system |
+| **mgt** | Automated management of Azure resources and corresponding access keys |
+| **srv** |  Definition layer for endpoints interacting with the application services |
+| **utils** | Storage and availability of auxiliary properties to the application |
 
-Os ficheiros *yml* utilizam a tecnologia do **Artillery** para executar diferentes cenários de teste e assegurar o correto funcionamento da aplicação. Os cenários permitem organizar um conjunto de testes definidos sobre dados e endpoints da aplicação, facilitando todo o processo de teste do código desenvolvido.
+The *yml* files use **Artillery** to run different test scenarios and ensure the application behaviour is correct and just. The scenarios make it possible to organize a set of tests defined on data and application endpoints, making the entire process of testing the developed code a little easier.
+
+<div style="page-break-after: always"></div>
 
 ### 2.2 Functions App
 
-Esta componente do projeto utiliza o serviço Azure Functions para incorporar funções serverless na execução de pequenos segmentos de código.
+The second component of the project - **fun.project** - was developed in a Maven project separate to that of the auction project and uses the Azure Functions service to incorporate serverless functions in the application. These functions allow the execution of small code snippets that have some utility towards the application:
 
-[...]
+| Function | Trigger | Utility |
+| --- | --- | --- |
+| **CloseAuctions** | Timer | Automatically closes an auction, at midnight, in case its auction lifetime has passed |
+| **Thumbnail** | Blob | Creates a 720p resolution thumbnail of any *jpg* file created or updated to the images container |
+
+Observations:
+
+* **CloseAuctions**
+> The data property that determines the end of an auction's lifetime is a date, not including time. This means the function can be triggered daily instead of every couple of seconds, minutes or hours, significantly reducing the amount of queries the database must compute.
+
+* **Thumbnail**
+> The thumbnails are stored in a separate thumbnails container and the 720p compression is performed assuming it is the desired resolution for the images used in the application. Only works for *jpg* files.
+
+## 3. Evaluation
+
+As requested in the project handout, **Artillery** scripts were configured to test and evaluate the application performance under different settings.
+
+Firstly, the application was deployed in the West Europe region, with caching (see Annex 1).
+
+![Results 1](...)
 
 <div style="page-break-after: always"></div>
 
-## 3. Implementação
+Secondly, the application was deployed in the West Europe regin still, but without caching (see Annex 2).
 
-### 3.1 Auctions App
+![Results 2](...)
 
-[...]
+Lastly, the application was deployed in the US West region, outside of Europe, with caching (see Annex 3).
+
+![Results 3](...)
+
+Given the results of running the above mentioned scripts, it is fair to assume to application performs [...].
 
 <div style="page-break-after: always"></div>
 
-## 4. Avaliação
+## Annexes
 
-[...]
+Annex 1
+```yml
+
+```
+
+Annex 2
+```yml
+
+```
+
+Annex 3
+```yml
+
+```
