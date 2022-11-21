@@ -7,12 +7,12 @@ import scc.utils.AzureProperties;
 
 public class RedisCache {
 	
-	private static JedisPool instance;
+	private static JedisPool instance = null;
 	
 	private static final ObjectMapper mapper = new ObjectMapper();
 	
 	public static synchronized JedisPool getCachePool() {
-		if (instance == null) {
+		if (instance == null && System.getenv(AzureProperties.REDIS_URL) != null) {
 			String REDIS_URL = System.getenv(AzureProperties.REDIS_URL);
 			String REDIS_KEY = System.getenv(AzureProperties.REDIS_KEY);
 			final JedisPoolConfig poolConfig = new JedisPoolConfig();

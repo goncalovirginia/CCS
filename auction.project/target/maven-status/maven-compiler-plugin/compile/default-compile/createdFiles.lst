@@ -1,0 +1,4 @@
+scc\utils\CognitiveSearchClient.class
+scc\data\AUCTION_STATUS.class
+scc\utils\GenericExceptionMapper.class
+scc\data\SessionDAO.class

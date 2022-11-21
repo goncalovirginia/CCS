@@ -21,8 +21,6 @@ scenarios:
     flow:
       - loop:                            # let's create numAuctions auctions - loop ... count
         - function: "selectUserSkewed"
-        - log: "{{ user }}"
-        - log: "{{ pwd }}"
         - post:                          # First: login as a user
             url: "/user/auth"
             name: "POST:/user/auth"
@@ -41,7 +39,7 @@ scenarios:
             beforeRequest: "uploadImageBody"
             capture: 
               regexp: "(.+)"
-              as: "imageId"              # capture the reply as image id to be used in uction creation
+              as: "photoId"              # capture the reply as image id to be used in uction creation
         - post:                          # Create auction
             url: "/auction"
             name: "POST:/auction"
@@ -53,10 +51,12 @@ scenarios:
               description: "{{ description }}"
               title: "{{ title }}"
               owner: "{{ user }}"
-              imageId: "{{ imageId }}"
+              photoId: "{{ photoId }}"
               endTime: "{{ endTime }}"
-              minimumPrice: "{{ minimumPrice }}"
+              minPrice: "{{ minimumPrice }}"
               status: "{{ status }}"
+              winner: ""
+              winningBid: 0
             capture:                     # Capturing auction id and store it in variable auctionId
               - json: $.id
                 as: "auctionId"
@@ -81,9 +81,9 @@ scenarios:
                 Accept: application/json
               json:
                 id: ""
-                auctionId: "{{ auctionId }}"
+                auction: "{{ auctionId }}"
                 user: "{{ user }}"
-                value: "{{ value }}"
+                amount: "{{ value }}"
           count: "{{ numBids }}"   
         - loop:                          # Let's add numQuestions questions to the auction
           - function: "selectUserSkewed"
@@ -104,9 +104,10 @@ scenarios:
                 Accept: application/json
               json:
                 id: ""
-                auctionId: "{{ auctionId }}"
+                auction: "{{ auctionId }}"
                 user: "{{ user }}"
                 text: "{{ text }}"
+                answer: ""
               capture:                     # Capturing question id and store it in variable questionId
                 - json: $.id
                   as: "questionId"

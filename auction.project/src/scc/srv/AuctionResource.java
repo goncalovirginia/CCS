@@ -87,7 +87,6 @@ public class AuctionResource extends AccessControl {
 		try {
 			checkSessionCookie(session, bid.getUser());
 			validateBid(bid);
-			resourceContext.getResource(UserResource.class).getUser(bid.getUser());
 			return new Bid(db.putBid(new BidDAO(bid)).getItem());
 		}
 		catch (ConflictException e) {
@@ -144,7 +143,7 @@ public class AuctionResource extends AccessControl {
 	
 	
 	private void validateAuction(Auction auction) {
-		List<String> list = Arrays.asList("", null, "closed", "open");
+		List<String> list = Arrays.asList("", null, AUCTION_STATUS.OPEN.toString(), AUCTION_STATUS.CLOSED.toString());
 	
 		if (list.contains(auction.getTitle())) 
 			throw new IllegalArgumentException("Auction title must not be empty!");
@@ -177,7 +176,11 @@ public class AuctionResource extends AccessControl {
 		if (bid.getAmount() < 1) 
 			throw new IllegalArgumentException("Bid amount must not be lower than 1!");
 		
-		getAuction(bid.getAuction());
+		if (getAuction(bid.getAuction()).getStatus().equals(AUCTION_STATUS.CLOSED.toString())) {
+			throw new IllegalArgumentException("Auction has already closed.");
+		}
+		
+		resourceContext.getResource(UserResource.class).getUser(bid.getUser());
 	}
 	
 	private void validateQuestion(Question question) {

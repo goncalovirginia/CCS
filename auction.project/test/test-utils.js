@@ -27,6 +27,7 @@ const path = require('path')
 var imagesIds = []
 var images = []
 var users = []
+let userPassword = new Map();
 
 // Auxiliary function to select an element from an array
 Array.prototype.sample = function(){
@@ -123,6 +124,7 @@ function genNewUser(context, events, done) {
 	context.vars.id = first + "." + last
 	context.vars.name = first + " " + last
 	context.vars.pwd = `${Faker.internet.password()}`
+	userPassword.set(context.vars.id, context.vars.pwd);
 	return done()
 }
 
@@ -133,6 +135,7 @@ function genNewUser(context, events, done) {
 function genNewUserReply(requestParams, response, context, ee, next) {
 	if( response.statusCode >= 200 && response.statusCode < 300 && response.body.length > 0)  {
 		let u = JSON.parse( response.body)
+		u.pwd = userPassword.get(u.id)
 		users.push(u)
 		fs.writeFileSync('users.data', JSON.stringify(users));
 	}
@@ -180,7 +183,7 @@ function selectUserSkewed(context, events, done) {
 function genNewAuction(context, events, done) {
 	context.vars.title = `${Faker.commerce.productName()}`
 	context.vars.description = `${Faker.commerce.productDescription()}`
-	context.vars.minimumPrice = `${Faker.commerce.price()}`
+	context.vars.minimumPrice = `${Faker.commerce.price(10, 1000, 0)}`
 	context.vars.bidValue = context.vars.minimumPrice + random(3)
 	var maxBids = 5
 	if( typeof context.vars.maxBids !== 'undefined')
@@ -211,11 +214,11 @@ function genNewBid(context, events, done) {
 		if( typeof context.vars.minimumPrice == 'undefined') {
 			context.vars.bidValue = random(100)
 		} else {
-			context.vars.bidValue = context.vars.minimumPrice + random(3)
+			context.vars.bidValue = +context.vars.minimumPrice + random(3)
 		}
 	}
-	context.vars.value = context.vars.bidValue;
-	context.vars.bidValue = context.vars.bidValue + 1 + random(3)
+	context.vars.value = +context.vars.bidValue;
+	context.vars.bidValue = +context.vars.bidValue + 1 + random(3)
 	return done()
 }
 

@@ -11,12 +11,11 @@ public class RedisLayer extends RedisCache {
 	private static final String USERS = "users";
 	
 	public static boolean putSession(Session session) {
-		boolean flag = false;
 		if (getCachePool() != null) {
 			writeToHashmap(USER_SESSIONS, session.getid(), session);
-			flag = true;
+			return true;
 		}
-		return flag;
+		return false;
 	}
 	
 	public static Session getSession(String uid) {
@@ -24,12 +23,11 @@ public class RedisLayer extends RedisCache {
 	}
 
 	public static boolean delSession(Session session) {
-		boolean flag = false;
 		if (getCachePool() != null){
 			deleteFromHashmapByValue(USER_SESSIONS, session.getUser());
-			flag = true;
+			return true;
 		}
-		return flag;
+		return false;
 	}
 	
 	public static Auction putAuction(Auction auction) {

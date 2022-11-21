@@ -99,7 +99,7 @@ public class CosmosDBLayer {
 	public CosmosItemResponse<Object> delSession(SessionDAO session) {
 		CosmosPagedIterable<SessionDAO> allSessions = getAllSessions();
 		for (SessionDAO sessionDAO : allSessions) {
-			if(sessionDAO.getUser() == session.getUser())
+			if(sessionDAO.getUser().equals(session.getUser()))
 				return sessions.deleteItem(sessionDAO, new CosmosItemRequestOptions());
 		}
 		return null;

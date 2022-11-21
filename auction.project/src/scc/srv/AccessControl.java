@@ -1,10 +1,6 @@
 package scc.srv;
 
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.NotAuthorizedException;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.DELETE;
-import jakarta.ws.rs.Path;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Cookie;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.NewCookie;
@@ -44,9 +40,9 @@ public class AccessControl {
 				.build();
 		
 		Session s = new Session(uuid, login.userId());
-		boolean check = RedisLayer.putSession(s);
+		boolean redisActive = RedisLayer.putSession(s);
 		
-		if(!check)
+		if (!redisActive)
 			CosmosDBLayer.getInstance().putSession(new SessionDAO(s));
 
 		return Response.ok().cookie(cookie).build();
@@ -84,6 +80,13 @@ public class AccessControl {
 		}
 		
 		Session s = RedisLayer.getSession(session.getValue());
+		
+		if (s == null) {
+			try {
+				s = new Session(CosmosDBLayer.getInstance().getSession(session.getValue()));
+			}
+			catch (NotFoundException ignored) {}
+		}
 		
 		if (s == null || s.getUser() == null || s.getUser().length() == 0) {
 			throw new NotAuthorizedException("No valid session initialized");
