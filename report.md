@@ -1,24 +1,22 @@
-![](https://www.pm2alliance.eu/wp-content/uploads/2019/10/fct-1024x212.jpg)
+![](https://media-exp1.licdn.com/dms/image/C4D1BAQFXbFOCkyU6_Q/company-background_10000/0/1612543717706?e=2147483647&v=beta&t=uMxx0Lx8R-t3Fglk10B_hbF_KvMYf87EJvoqUdtsRpQ)
 
-# SCC<br>Auctions Project</span><br>
-### Repositório: [https://github.com/goncalovirginia/CCS](https://github.com/goncalovirginia/CCS)<br>
-### André Correia - 64783 - aas.correia@campus.fct.unl.pt<br>
+# **Cloud Computing Systems** <br> Auctions Project </span><br>
+### Repository: [https://github.com/goncalovirginia/CCS](https://github.com/goncalovirginia/CCS)<br>
 ### Gonçalo Virgínia - 56773 - g.virginia@campus.fct.unl.pt<br>
+### André Correia - 64783 - aas.correia@campus.fct.unl.pt<br>
 ### Rodrigo Fontinha - 64813 - r.fontinha@campus.fct.unl.pt<br>
 
 <br>
 
-## 1. Introdução
+## 1. Introduction
 
-Este projeto surge no âmbito da unidade curricular Sistemas de Computação em Cloud e tem como objetivo o desenvolvimento de uma aplicação de leilões à semelhança do EBay, focando no design, na implementação do backend e nos respetivos scripts de teste.
-
-A implementação do projeto é possível através dos serviços e recursos Azure, que fornecem tanto uma plataforma para deployment da aplicação como funcionalidades que tornam todo o processo de desenvolvimento mais fácil e eficaz.
+Main project for our Cloud Compututing Systems course, comprised of the backend implementation of a scalable auction system akin to eBay, using Microsoft Azure as the cloud provider.
 
 <div style="page-break-after: always"></div>
 
-## 2. Design
+## 2. Structure
 
-O projeto foi separado em duas componentes - **auction.project** e **fun.project** - que, por si, são constituídas por diferentes módulos.
+This project is separated into 2 components: **auction.project**, consisting of the main application with which users can interact with, and, **fun.project**, which is an auxiliary service employing Azure Functions, that has extremely useful trigger integrations with other Azure services, to easily manage or build upon them.
 
 De entre os vários serviços globalmente disponíveis pela Azure, este projeto visa tirar partido de:
 
