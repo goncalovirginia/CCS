@@ -205,7 +205,7 @@ public class CosmosDBLayer {
 	}
 	
 	public CosmosPagedIterable<Object> getTrendingAuctions() {
-		return auctionsFreq.queryItems("SELECT * FROM auctionsTrending", new CosmosQueryRequestOptions(), Object.class);
+		return auctionsTrending.queryItems("SELECT * FROM auctionsTrending", new CosmosQueryRequestOptions(), Object.class);
 	}
 	
 }
