@@ -1,7 +1,5 @@
 package scc.data;
 
-import java.util.Arrays;
-
 /**
  * Represents a User, as returned to the clients
  */

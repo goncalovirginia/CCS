@@ -1,22 +1,22 @@
-![](https://www.pm2alliance.eu/wp-content/uploads/2019/10/fct-1024x212.jpg)
+![](https://media-exp1.licdn.com/dms/image/C4D1BAQFXbFOCkyU6_Q/company-background_10000/0/1612543717706?e=2147483647&v=beta&t=uMxx0Lx8R-t3Fglk10B_hbF_KvMYf87EJvoqUdtsRpQ)
 
-# SCC<br>Auctions Project</span><br>
+# **Cloud Computing Systems** <br> Auctions Project </span><br>
 ### Repository: [https://github.com/goncalovirginia/CCS](https://github.com/goncalovirginia/CCS)<br>
-### André Correia - 64783 - aas.correia@campus.fct.unl.pt<br>
 ### Gonçalo Virgínia - 56773 - g.virginia@campus.fct.unl.pt<br>
+### André Correia - 64783 - aas.correia@campus.fct.unl.pt<br>
 ### Rodrigo Fontinha - 64813 - r.fontinha@campus.fct.unl.pt<br>
 
 <div style="page-break-after: always"></div>
 
 ## 1. Introduction
 
-This project arises from the Cloud Computing Systems curricular unit and aims to develop an auction application similar to EBay, focusing on the design, implementation of the backend and the respective test scrips.
+Main project for the Cloud Computing Systems course, comprised of the backend implementation of a scalable auction system akin to EBay, focusing on its design and implementation.
 
-Using Azure, the project is provisioned with both a platform for application deployment in the Azure cloud and features that support the project implementation process and allow for more efficient programming.
+Using Azure as the cloud provider, the project is provisioned with both a platform for application deployment in the Azure cloud and features that support the project implementation process and allow for more efficient programming.
 
-## 2. Design
+## 2. Structure
 
-The project was separated into two components as Maven projects - **auction.project** and **fun.project** - which are composed of different modules.
+This project is separated into two components, the **auction.project**, consisting of the main application with which users can interact with, and **fun.project**, an auxiliary service employing Azure Functions, that has extremely useful trigger integrations with other Azure services, to easily manage or build upon them.
 
 Among the various globally available services that Azure provides, this project aims to take advantage of the following:
 
@@ -47,7 +47,20 @@ The *yml* files use **Artillery** to run different test scenarios and ensure the
 
 ### 2.2 Functions App
 
-The second component of the project - **fun.project** - was developed in a Maven project separate to that of the auction project and uses the Azure Functions service to incorporate serverless functions in the application. These functions allow the execution of small code snippets that have some utility towards the application:
+The second component of the project - **fun.project** - was developed in a Maven project separate to that of the auction project and uses the Azure Functions service to incorporate serverless functions in the application.
+
+Much like the previous component, the functions application
+includes a group of modules. However, these modules were reduced to the resources that are imperative to run the functions:
+
+| Module | Role |
+| --- | --- |
+| **data** | Data structures |
+| **dblayer** | Communication layer with CosmosDB as the database system |
+| **pt** | Serverless functions |
+| **rediscache** |  Communication layer with Redis as the caching system |
+| **utils** | Storage and availability of auxiliary properties to the application |
+
+The serverless functions allow the execution of small code snippets that have some utility towards the application, as the following table suggests:
 
 | Function | Trigger | Utility |
 | --- | --- | --- |
@@ -62,6 +75,8 @@ Observations:
 * **Thumbnail**
 > The thumbnails are stored in a separate thumbnails container and the 720p compression is performed assuming it is the desired resolution for the images used in the application. Only works for *jpg* files.
 
+<div style="page-break-after: always"></div>
+
 ## 3. Evaluation
 
 As requested in the project handout, **Artillery** scripts were configured to test and evaluate the application performance under different settings.
@@ -69,8 +84,6 @@ As requested in the project handout, **Artillery** scripts were configured to te
 Firstly, the application was deployed in the West Europe region, with caching (see Annex 1).
 
 ![Results 1](...)
-
-<div style="page-break-after: always"></div>
 
 Secondly, the application was deployed in the West Europe regin still, but without caching (see Annex 2).
 
