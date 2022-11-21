@@ -10,7 +10,7 @@
 
 ## 1. Introduction
 
-Main project for the Cloud Computing Systems course, comprised of the backend implementation of a scalable auction system akin to EBay, focusing on its design and implementation.
+Main project for the Cloud Computing Systems course, comprised of the backend implementation of a scalable auction system akin to EBay.
 
 Using Azure as the cloud provider, the project is provisioned with both a platform for application deployment in the Azure cloud and features that support the project implementation process and allow for more efficient programming.
 
@@ -85,7 +85,7 @@ Firstly, the application was deployed in the West Europe region, with caching (s
 
 ![Results 1](...)
 
-Secondly, the application was deployed in the West Europe regin still, but without caching (see Annex 2).
+Secondly, the application was deployed in the West Europe region still, but without caching (see Annex 2).
 
 ![Results 2](...)
 
