@@ -128,7 +128,7 @@ public class AuctionResource extends AccessControl {
 		}
 		
 		Auction auction = getAuction(auctionId);
-		Session s = checkSessionCookie(session, auction.getOwner());
+		checkSessionCookie(session, auction.getOwner());
 		QuestionDAO question = db.getQuestion(questionId);
 		question.setAnswer(reply);
 		return new Question(db.putQuestion(question).getItem());
