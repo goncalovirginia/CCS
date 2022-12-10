@@ -1,5 +1,5 @@
 config:
-  target: 'https://appwesteurope56773.azurewebsites.net/rest'
+  target: 'hhttp://20.13.66.99/rest'
   plugins:
     metrics-by-endpoint: {}
   processor: "./test-utils.js"
