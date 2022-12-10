@@ -1,13 +1,13 @@
 config:
-  target: 'https://appwesteurope56773.azurewebsites.net/rest'
+  target: 'http://20.13.66.99/rest'
   http:
-    timeout: 30
+    timeout: 60
   plugins:
     metrics-by-endpoint:
       useOnlyRequestNames: true  # new mode to aggregate metrics in artillery
   processor: "./test-utils.js"
   variables:
-    numUsers : 100
+    numUsers : 50
   phases:
   - name: "Create users"    # Create users
     duration: 1
@@ -17,10 +17,10 @@ scenarios:
   - name: 'Create users'
     weight: 1
     flow:
-      - loop:                            # let's create 100 users - loop ... count
-        - put:                          # First: put image for the user
+      - loop:                            # let's create 50 users - loop ... count
+        - post:                          # First: put image for the user
             url: "/media"
-            name: "PUT:/media"
+            name: "POST:/media"
             headers:
               Content-Type: application/octet-stream
               Accept: application/json
@@ -29,9 +29,9 @@ scenarios:
               regexp: "(.+)"
               as: "imageId"              # capture the reply as image id to be used in user creation
         - function: "genNewUser"         # Generate the needed information for the user
-        - put:
+        - post:
             url: "/user"
-            name: "PUT:/user"
+            name: "POST:/user"
             headers:
               Content-Type: application/json
               Accept: application/json
