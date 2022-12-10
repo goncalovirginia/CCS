@@ -1,0 +1,1 @@
+az container create --resource-group rg-westeurope-64783 --name scc-app --image aascorreia/scc-app --ports 8080 --dns-name-label scc-auctions-64783 --restart-policy OnFailure

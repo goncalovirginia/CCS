@@ -1,0 +1,6 @@
+STORAGE_CONNECTION_STRING=DefaultEndpointsProtocol=https;AccountName=storagewesteurope64813;AccountKey=EjtM/+XcCRqpexxLYIjC99bwKP6NBSptR/iuxIfBRqKLYMhcJfzEaW0QVo9dwEqg+zhhM8TCVPZi+AStC5O5Ug==;EndpointSuffix=core.windows.net
+COSMOSDB_KEY=Dm2Qw8cZgDwMtBxbVusNrTonmT1DUEvtDbJtkt3HcCA8GFjmim7UJn5jofi9Y2dElHqQfBukgQ0pACDbDxj91A==
+COSMOSDB_URL=https://cosmosdb64813.documents.azure.com:443/
+COSMOSDB_NAME=cosmosdb64813
+REDIS_URL=rediswesteurope64813.redis.cache.windows.net
+REDIS_KEY=eYUDkloF723RVtWyLndB4rF7utQUqDBc9AzCaJl0xdw=
