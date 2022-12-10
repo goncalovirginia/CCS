@@ -9,27 +9,19 @@ import com.azure.cosmos.util.CosmosPagedIterable;
 
 import javax.ws.rs.NotFoundException;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
 public class CosmosDBLayer {
 	
 	private static final String CONNECTION_URL = "https://cosmosdb64813.documents.azure.com:443/";
 	private static final String DB_KEY = "Dm2Qw8cZgDwMtBxbVusNrTonmT1DUEvtDbJtkt3HcCA8GFjmim7UJn5jofi9Y2dElHqQfBukgQ0pACDbDxj91A==";
 	private static final String DB_NAME = "cosmosdb64813";
 	private static CosmosDBLayer instance;
-	private static ArrayList<String> regions = new ArrayList<String>(Arrays.asList("West Europe", "North Europe"));
 	
 	public static synchronized CosmosDBLayer getInstance() {
 		if (instance == null) {
 			CosmosClient client = new CosmosClientBuilder()
 					.endpoint(CONNECTION_URL)
 					.key(DB_KEY)
-					.multipleWriteRegionsEnabled(true)
-					.preferredRegions(regions)
 					.directMode()
-					//.gatewayMode()
-					// replace by .directMode() for better performance
 					.consistencyLevel(ConsistencyLevel.SESSION)
 					.connectionSharingAcrossClientsEnabled(true)
 					.contentResponseOnWriteEnabled(true)
@@ -48,8 +40,6 @@ public class CosmosDBLayer {
 	private CosmosContainer bids;
 	private CosmosContainer questions;
 	private CosmosContainer sessions;
-	private CosmosContainer auctionsFreq;
-	private CosmosContainer auctionsTrending;
 	
 	public CosmosDBLayer(CosmosClient client) {
 		this.client = client;
@@ -64,8 +54,6 @@ public class CosmosDBLayer {
 			bids = db.getContainer("bids");
 			questions = db.getContainer("questions");
 			sessions = db.getContainer("sessions");
-			auctionsFreq = db.getContainer("auctionsFreq");
-			auctionsTrending = db.getContainer("auctionsTrending");
 		}
 	}
 	
@@ -111,9 +99,16 @@ public class CosmosDBLayer {
 	public UserDAO getUserById(String id) {
 		try {
 			return users.queryItems("SELECT * FROM users WHERE users.id=\"" + id + "\"", new CosmosQueryRequestOptions(), UserDAO.class).stream().toList().get(0);
-		}
-		catch (Exception e) {
+		}catch (Exception e) {
 			throw new NotFoundException();
+		}
+	}
+
+	public UserDAO getUserByIdForAC(String id) {
+		try {
+			return users.queryItems("SELECT * FROM users WHERE users.id=\"" + id + "\"", new CosmosQueryRequestOptions(), UserDAO.class).stream().toList().get(0);
+		}catch (Exception e) {
+			return null;
 		}
 	}
 	
@@ -147,10 +142,6 @@ public class CosmosDBLayer {
 	
 	public CosmosPagedIterable<AuctionDAO> getAuctions() {
 		return auctions.queryItems("SELECT * FROM auctions", new CosmosQueryRequestOptions(), AuctionDAO.class);
-	}
-	
-	public CosmosPagedIterable<AuctionDAO> getAuctionsEndingSoon() {
-		return auctions.queryItems("SELECT * FROM auctions WHERE auctions.status=\"open\" AND DATETIMEDIFF(\"day\", GETCURRENTDATETIME(), auctions.endTime)<=2 AND DATETIMEDIFF(\"day\", GETCURRENTDATETIME(), auctions.endTime)>=0", new CosmosQueryRequestOptions(), AuctionDAO.class);
 	}
 	
 	public CosmosPagedIterable<AuctionDAO> getAuctionsByOwner(String id) {
@@ -197,14 +188,6 @@ public class CosmosDBLayer {
 		catch (Exception e) {
 			throw new NotFoundException();
 		}
-	}
-	
-	public CosmosPagedIterable<Object> getAuctionCountPerUser() {
-		return auctionsFreq.queryItems("SELECT * FROM auctionsFreq", new CosmosQueryRequestOptions(), Object.class);
-	}
-	
-	public CosmosPagedIterable<Object> getTrendingAuctions() {
-		return auctionsTrending.queryItems("SELECT * FROM auctionsTrending", new CosmosQueryRequestOptions(), Object.class);
 	}
 	
 }
