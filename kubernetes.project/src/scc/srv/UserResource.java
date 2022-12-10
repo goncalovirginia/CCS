@@ -5,10 +5,8 @@ import jakarta.ws.rs.container.ResourceContext;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.Cookie;
 import jakarta.ws.rs.core.MediaType;
-import org.bson.Document;
 import scc.cache.RedisLayer;
-import scc.data.MongoDBCollection;
-import scc.data.MongoDBLayer;
+import scc.data.CosmosDBLayer;
 import scc.data.User;
 import scc.data.UserDAO;
 
@@ -21,7 +19,7 @@ import java.util.List;
 @Path("/user")
 public class UserResource {
 	
-	private final MongoDBLayer db = new MongoDBLayer();
+	private final CosmosDBLayer db = CosmosDBLayer.getInstance();
 	
 	@Context
 	ResourceContext resourceContext;
@@ -32,8 +30,7 @@ public class UserResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public User createUser(User user) {
 		validateUser(user);
-		db.insertDocument(MongoDBCollection.USERS, user.toDocument());
-		return RedisLayer.putUser(new User(db.getDocument(MongoDBCollection.USERS, user.toDocument())));
+		return RedisLayer.putUser(new User(db.putUser(new UserDAO(user)).getItem()));
 	}
 	
 	@GET
@@ -41,7 +38,7 @@ public class UserResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public User getUser(@PathParam("id") String id) {
 		User cacheResult = RedisLayer.getUser(id);
-		return cacheResult != null ? cacheResult : new User(db.getDocument(MongoDBCollection.USERS, new Document().append("id", id)));
+		return cacheResult != null ? cacheResult : new User(db.getUserById(id));
 	}
 	
 	@DELETE
@@ -50,8 +47,13 @@ public class UserResource {
 	public User deleteUser(@CookieParam("scc:session") Cookie session, @PathParam("id") String id) {
 		AccessControl.checkSessionCookie(session, id);
 		RedisLayer.delUser(id);
-		db.deleteDocument(MongoDBCollection.USERS, new Document().append("id", id));
-		return new User(id);
+		Object dbUser = db.delUserById(id).getItem();
+		
+		if (dbUser == null) {
+			throw new NotFoundException();
+		}
+		
+		return new User((UserDAO) dbUser);
 	}
 	
 	private void validateUser(User user) {
