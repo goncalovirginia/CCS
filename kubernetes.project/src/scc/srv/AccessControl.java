@@ -60,12 +60,17 @@ public class AccessControl {
 		if (login == null || login.userId() == null || login.pwd() == null) {
 			throw new IllegalArgumentException("Empty logout credentials.");
 		}
-			
-		User user = RedisLayer.getUser(login.userId());
 
-		if (!(user != null && user.getPwd().equals(Hash.of(login.pwd()))) &&
-				!CosmosDBLayer.getInstance().getUserById(login.userId()).getPwd().equals(Hash.of(login.pwd()))) {
-			throw new NotAuthorizedException("Incorrect logout credentials");
+		User user = RedisLayer.getUser(login.userId());
+		String pw = Hash.of(login.pwd());
+
+		if(user != null && !user.getPwd().equals(pw)){
+			throw new NotAuthorizedException("Incorrect login credentials");
+		}else{
+			UserDAO usr = CosmosDBLayer.getInstance().getUserByIdForAC(login.userId());
+			if(usr == null || usr != null && !usr.getPwd().equals(pw)){
+				throw new NotAuthorizedException("Incorrect login credentials");
+			}
 		}
 
 		Session s = new Session(null, login.userId());
