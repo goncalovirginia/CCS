@@ -34,7 +34,7 @@ There were also attempts at replacing the database system by MongoDB and Azure F
 
 In order to test and evaluate the application deployed to Kubernetes, the Artillery scripts used in the first project were adapted to meet testing conditions (see [Annex section](#a3)). Additionally, alike the first project's evaluation, the data provided in this section is based on response time when running the corresponding Artillery scripts.
 
-**Note:** The target field must be changed in both scripts to match the port exposed by the Kubernetes service.
+**Note:** The target field must be changed in both scripts to match the application IP exposed by the Kubernetes service.
 
 * **create-users.yml**
 
