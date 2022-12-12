@@ -24,7 +24,6 @@ const Faker = require('faker')
 const fs = require('fs')
 const path = require('path')
 
-var imagesIds = []
 var images = []
 var users = []
 let userPassword = new Map();
@@ -92,30 +91,6 @@ function uploadImageBody(requestParams, context, ee, next) {
 }
 
 /**
- * Process reply of the download of an image. 
- * Update the next image to read.
- */
-function processUploadReply(requestParams, response, context, ee, next) {
-	if( typeof response.body !== 'undefined' && response.body.length > 0) {
-		imagesIds.push(response.body)
-	}
-    return next()
-}
-
-/**
- * Select an image to download.
- */
-function selectImageToDownload(context, events, done) {
-	if( imagesIds.length > 0) {
-		context.vars.imageId = imagesIds.sample()
-	} else {
-		delete context.vars.imageId
-	}
-	return done()
-}
-
-
-/**
  * Generate data for a new user using Faker
  */
 function genNewUser(context, events, done) {
@@ -174,7 +149,7 @@ function selectUserSkewed(context, events, done) {
 }
 
 /**
- * Generate data for a new channel
+ * Generate data for a new auction
  * Besides the variables for the auction, initializes the following vars:
  * numBids - number of bids to create, if batch creating 
  * numQuestions - number of questions to create, if batch creating 
@@ -281,21 +256,13 @@ function decideToReply(context, events, done) {
 }
 
 
-/**
- * Decide next action
- * 0 -> browse popular
- * 1 -> browse recent
- */
+
 function decideNextAction(context, events, done) {
 	delete context.vars.auctionId;
 	let rnd = Math.random()
-	if( rnd < 0.075)
-		context.vars.nextAction = 0; // browsing recent
-	else if( rnd < 0.15)
-		context.vars.nextAction = 1; // browsing popular
-	else if( rnd < 0.225)
-		context.vars.nextAction = 2; // browsing user
-	else if( rnd < 0.3)
+	if( rnd < 0.225)
+		context.vars.nextAction = 2; // browsing user auctions
+	else if( rnd < 0.4)
 		context.vars.nextAction = 3; // create an auction
 	else if( rnd < 0.8)
 		context.vars.nextAction = 4; // checking auction
@@ -303,42 +270,38 @@ function decideNextAction(context, events, done) {
 		context.vars.nextAction = 5; // do a bid
 	else
 		context.vars.nextAction = 6; // post a message
+
 	if( context.vars.nextAction == 2) {
 		if( Math.random() < 0.5)
-			context.vars.user2 = context.vars.user
+			if(typeof context.vars.user2 != 'undefined')
+				context.vars.user = context.vars.user2
 		else {
 			let user = users.sample()
 			context.vars.user2 = user.id
 		}
 	}
+
 	if( context.vars.nextAction == 3) {
 		context.vars.title = `${Faker.commerce.productName()}`
 		context.vars.description = `${Faker.commerce.productDescription()}`
-		context.vars.minimumPrice = `${Faker.commerce.price()}`
+		context.vars.minimumPrice = `${Faker.commerce.price(10, 1000, 0)}`
 		context.vars.bidValue = context.vars.minimumPrice + random(3)
 		var d = new Date();
 		d.setTime(Date.now() + 60000 + random( 300000));
 		context.vars.endTime = d.toISOString();
 		context.vars.status = "OPEN";
 	}
-	if( context.vars.nextAction >= 4) {
-		let r = random(3)
-		var auct = null
-		if( r == 2 && typeof context.vars.auctionsLst == 'undefined')
-			r = 1;
-		if( r == 2)
-  			auct = context.vars.auctionsLst.sample();
-		else if( r == 1)
-  			auct = context.vars.recentLst.sample();
-		else if( r == 0)
-  			auct = context.vars.popularLst.sample();
-		if( auct == null) {
+	if(context.vars.nextAction >= 4) {
+		if(typeof context.vars.auctionsLst == 'undefined')
 			return decideNextAction(context,events,done);
-		}
+
+		let auct = context.vars.auctionsLst.sample();
+		if(typeof auct == 'undefined')
+			return decideNextAction(context,events,done);
 		context.vars.auctionId = auct.id
-		context.vars.imageId = auct.imageId
+		context.vars.photoId = auct.photoId
 	}
-	if( context.vars.nextAction == 5)
+	if( context.vars.nextAction == 6)
 		context.vars.text = `${Faker.lorem.paragraph()}`;
 
 	return done()
@@ -354,25 +317,9 @@ function random50(context, next) {
 }
 
 /**
- * Return true with probability 50% 
+ * Return true with probability 80% 
  */
 function random80(context, next) {
   const continueLooping = Math.random() < 0.8
   return next(continueLooping);
 }
-
-/**
- * Process reply for of new users to store the id on file
- */
-function extractCookie(requestParams, response, context, ee, next) {
-	if( response.statusCode >= 200 && response.statusCode < 300)  {
-		for( let header of response.rawHeaders) {
-			if( header.startsWith("scc:session")) {
-				context.vars.mycookie = header.split(';')[0];
-			}
-		}
-	}
-    return next()
-}
-
-
